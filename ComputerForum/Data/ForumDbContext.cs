@@ -32,6 +32,15 @@ namespace ComputerForum.Data
                .HasMany(e => e.ReportedUsers)
                .WithOne(e => e.ReportedUser)
                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<User>()
+               .HasIndex(e => e.Name)
+               .IsUnique();
+            modelBuilder.Entity<User>()
+               .HasIndex(e => e.Email)
+               .IsUnique();
+            modelBuilder.Entity<Category>()
+               .HasIndex(e => e.Name)
+               .IsUnique();
         }
 
         public DbSet<Category> Categories { get; set; }
