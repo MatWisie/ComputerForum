@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComputerForum.Interfaces
 {
-    public interface IForumDbContext
+    public interface IForumDbContext 
     {
         DbSet<Category> Categories { get; set; }
         DbSet<ClickedReputation> ClickedReputations { get; set; }

@@ -3,6 +3,7 @@ using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Security.Claims;
 
 namespace ComputerForum.Controllers
@@ -19,7 +20,7 @@ namespace ComputerForum.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(UserVM userVM)
+        public async Task<IActionResult> Login(UserLoginVM userVM)
         {
             var user = _userService.GetUser(userVM);
             if(user != null)
@@ -27,7 +28,6 @@ namespace ComputerForum.Controllers
                 var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
-                                new Claim(ClaimTypes.Email, user.Email),
                                 new Claim(ClaimTypes.Role, "User"),
                             };
                 var claimsIdentity = new ClaimsIdentity(
@@ -49,6 +49,16 @@ namespace ComputerForum.Controllers
         }
         public IActionResult Register()
         {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(UserRegisterVM userVM)
+        {
+            bool result = _userService.AddUser(userVM);
+            if(result == true)
+            {
+                return RedirectToAction("Login");
+            }
             return View();
         }
         public IActionResult Signout()

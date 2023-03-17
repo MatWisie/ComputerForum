@@ -1,9 +1,11 @@
 ﻿using ComputerForum.ViewModels;
+using System.Net;
 
 namespace ComputerForum.Interfaces
 {
     public interface IUserService
     {
-        UserVM? GetUser(UserVM userVM);
+        UserLoginVM? GetUser(UserLoginVM userVM);
+        public bool AddUser(UserRegisterVM userVM);
     }
 }

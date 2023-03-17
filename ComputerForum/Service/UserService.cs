@@ -1,5 +1,7 @@
 ﻿using ComputerForum.Interfaces;
+using ComputerForum.Models;
 using ComputerForum.ViewModels;
+using System.Net;
 
 namespace ComputerForum.Service
 {
@@ -11,25 +13,47 @@ namespace ComputerForum.Service
             _userRepository = userRepository;
         }
 
-        public UserVM? GetUser(UserVM userVM)
+        public UserLoginVM? GetUser(UserLoginVM userVM)
         {
             var user = _userRepository.GetUser(userVM);
             if (user != null)
             {
-                UserVM tmpUserVM = new UserVM()
+                UserLoginVM tmpUserVM = new UserLoginVM()
                 {
-                    Active = user.Active,
-                    Admin = user.Admin,
-                    Age = user.Age,
-                    Email = user.Email,
-                    Gender = user.Gender,
                     Name = user.Name,
-                    Password = user.Password,
-                    Reputation = user.Reputation
+                    Password = user.Password
                 };
                 return tmpUserVM;
             }
             return null;
         }
+
+        public bool AddUser(UserRegisterVM userVM)
+        {
+            bool userExists = _userRepository.CheckIfUserExists(userVM);
+            if(!userExists)
+            {
+                User tmpUserVM = new User()
+                {
+                    Name = userVM.Name,
+                    Password = userVM.Password,
+                    Email = userVM.Email,
+                    Age = userVM.Age,
+                    Gender = userVM.Gender,
+                    Active = userVM.Active,
+                    Admin = userVM.Admin,
+                    Reputation = userVM.Reputation,
+                };
+                _userRepository.AddUser(tmpUserVM);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
     }
 }

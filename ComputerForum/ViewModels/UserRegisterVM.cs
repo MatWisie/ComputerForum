@@ -2,7 +2,7 @@
 
 namespace ComputerForum.ViewModels
 {
-    public class UserVM
+    public class UserRegisterVM
     {
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
