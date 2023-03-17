@@ -2,15 +2,25 @@ using ComputerForum.Data;
 using ComputerForum.Interfaces;
 using ComputerForum.Repository;
 using ComputerForum.Service;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddDbContext<ForumDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        //options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        //options.SlidingExpiration = true;
+    });
+
 builder.Services.AddScoped<IForumDbContext, ForumDbContext>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -28,6 +38,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+//app.MapRazorPages();
+app.MapDefaultControllerRoute();
+
+
 
 app.UseRouting();
 

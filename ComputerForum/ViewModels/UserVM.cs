@@ -14,7 +14,7 @@ namespace ComputerForum.ViewModels
         public int Age { get; set; }
         [Required(ErrorMessage = "Choose your gender")]
         public string Gender { get; set; }
-        public bool Active { get; set; } = false;
+        public bool Active { get; set; } = true;
         public bool Admin { get; set; } = false;
         public int Reputation { get; set; } = 0;
     }
