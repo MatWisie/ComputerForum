@@ -22,7 +22,7 @@ namespace ComputerForum.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserLoginVM userVM)
         {
-            var user = _userService.GetUser(userVM);
+            var user = _userService.LoginUser(userVM);
             if(user != null)
             {
                 var claims = new List<Claim>
@@ -61,9 +61,10 @@ namespace ComputerForum.Controllers
             }
             return View();
         }
-        public IActionResult Signout()
+        public async Task Signout()
         {
-            return View();
+            await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme);
         }
     }
 }

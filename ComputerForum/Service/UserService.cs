@@ -13,17 +13,21 @@ namespace ComputerForum.Service
             _userRepository = userRepository;
         }
 
-        public UserLoginVM? GetUser(UserLoginVM userVM)
+        public UserLoginVM? LoginUser(UserLoginVM userVM)
         {
             var user = _userRepository.GetUser(userVM);
             if (user != null)
             {
-                UserLoginVM tmpUserVM = new UserLoginVM()
+                if (BCrypt.Net.BCrypt.Verify(userVM.Password, user.Password))
                 {
-                    Name = user.Name,
-                    Password = user.Password
-                };
-                return tmpUserVM;
+                    UserLoginVM tmpUserVM = new UserLoginVM()
+                    {
+                        Name = user.Name,
+                        Password = user.Password
+                    };
+                    return tmpUserVM;
+                }
+                return null;
             }
             return null;
         }
@@ -31,7 +35,8 @@ namespace ComputerForum.Service
         public bool AddUser(UserRegisterVM userVM)
         {
             bool userExists = _userRepository.CheckIfUserExists(userVM);
-            if(!userExists)
+            userVM.Password = BCrypt.Net.BCrypt.HashPassword(userVM.Password);
+            if (!userExists)
             {
                 User tmpUserVM = new User()
                 {
