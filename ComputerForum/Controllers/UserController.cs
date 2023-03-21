@@ -22,30 +22,34 @@ namespace ComputerForum.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserLoginVM userVM)
         {
-            var user = _userService.LoginUser(userVM);
-            if(user != null)
+            if (ModelState.IsValid)
             {
-                var claims = new List<Claim>
+                var user = _userService.LoginUser(userVM);
+                if (user != null)
+                {
+                    var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
                                 new Claim(ClaimTypes.Role, "User"),
                             };
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var authProperties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                };
-                await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties); 
+                    var authProperties = new AuthenticationProperties
+                    {
+                        AllowRefresh = true,
+                    };
+                    await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
 
-                return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
+                }
+                ModelState.AddModelError("", "Wrong name or password");
+                return View(userVM);
             }
-           
-            return View();
+            return View(userVM);
         }
         public IActionResult Register()
         {
@@ -54,12 +58,17 @@ namespace ComputerForum.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterVM userVM)
         {
-            bool result = _userService.AddUser(userVM);
-            if(result == true)
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Login");
+                bool result = _userService.AddUser(userVM);
+                if (result == true)
+                {
+                    return RedirectToAction("Login");
+                }
+                ModelState.AddModelError("", "User with that name already exists");
+                return View(userVM);
             }
-            return View();
+            return View(userVM);
         }
         public async Task Signout()
         {

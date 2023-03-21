@@ -35,9 +35,9 @@ namespace ComputerForum.Service
         public bool AddUser(UserRegisterVM userVM)
         {
             bool userExists = _userRepository.CheckIfUserExists(userVM);
-            userVM.Password = BCrypt.Net.BCrypt.HashPassword(userVM.Password);
             if (!userExists)
             {
+                userVM.Password = BCrypt.Net.BCrypt.HashPassword(userVM.Password);
                 User tmpUserVM = new User()
                 {
                     Name = userVM.Name,
