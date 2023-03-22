@@ -2,6 +2,7 @@
 using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
@@ -70,6 +71,7 @@ namespace ComputerForum.Controllers
             }
             return View(userVM);
         }
+        [Authorize]
         public async Task Signout()
         {
             await HttpContext.SignOutAsync(
