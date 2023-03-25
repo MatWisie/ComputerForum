@@ -14,7 +14,7 @@ namespace ComputerForum.Models
         [Required]
         public DateTime CreationDate { get; set; } = DateTime.Now;
         [Required]
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
         [Required]
         [ForeignKey("User")]
         public int CreatorId { get; set; }
