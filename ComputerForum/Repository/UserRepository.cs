@@ -17,6 +17,10 @@ namespace ComputerForum.Repository
         {
             return _context.Users.FirstOrDefault(e => e.Name == userVM.Name);
         }
+        public int? GetUserIdByName(string userName)
+        {
+            return _context.Users.FirstOrDefault(e => e.Name == userName).Id;
+        }
         public bool CheckIfUserExists(UserRegisterVM userVM)
         {
             return _context.Users.Any(e => e.Name == userVM.Name);

@@ -1,4 +1,5 @@
 ﻿using ComputerForum.Interfaces;
+using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,43 +8,26 @@ namespace ComputerForum.Controllers
     public class TopicController : Controller
     {
         private readonly ITopicService _topicService;
-        public TopicController(ITopicService topicService)
+        private readonly ICommentService _commentService;
+        public TopicController(ITopicService topicService, ICommentService commentService)
         {
             _topicService = topicService;
-        }
-        // GET: TopicController
-        public IActionResult Index(string categoryName)
-        {
-            var topics = _topicService.GetTopics(categoryName);
-            return View(topics);
+            _commentService = commentService;
         }
 
-        // GET: TopicController/Details/5
-        public IActionResult Details(int id)
+        public IActionResult Index(int topicId)
         {
-            var topic = _topicService.GetTopic(id);
+            var topic = _topicService.GetTopic(topicId);
             return View(topic);
-        }
-
-        // GET: TopicController/Create
-        public IActionResult Create()
-        {
-            return View();
         }
 
         // POST: TopicController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(IFormCollection collection)
+        public IActionResult CreateComment(CommentCreateVM comment)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _commentService.AddComment(comment);
+            return RedirectToAction("Index", comment.TopicId);
         }
 
         // GET: TopicController/Edit/5

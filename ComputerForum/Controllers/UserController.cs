@@ -28,9 +28,11 @@ namespace ComputerForum.Controllers
                 var user = _userService.LoginUser(userVM);
                 if (user != null)
                 {
+                    int? userId = _userService.GetUserId(user.Name);
                     var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
+                                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                                 new Claim(ClaimTypes.Role, "User"),
                             };
                     var claimsIdentity = new ClaimsIdentity(

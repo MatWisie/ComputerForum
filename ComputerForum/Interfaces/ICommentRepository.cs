@@ -2,8 +2,9 @@
 
 namespace ComputerForum.Interfaces
 {
-    public interface ICommentsRepository
+    public interface ICommentRepository
     {
         IEnumerable<Comment> GetTopicComments(int topicId);
+        void AddComment(Comment comment);
     }
 }

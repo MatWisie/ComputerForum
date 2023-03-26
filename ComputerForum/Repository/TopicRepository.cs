@@ -1,6 +1,7 @@
 ﻿using ComputerForum.Data;
 using ComputerForum.Interfaces;
 using ComputerForum.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerForum.Repository
 {

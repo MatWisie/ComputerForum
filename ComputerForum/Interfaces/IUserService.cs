@@ -7,5 +7,6 @@ namespace ComputerForum.Interfaces
     {
         UserLoginVM? LoginUser(UserLoginVM userVM);
         public bool AddUser(UserRegisterVM userVM);
+        int? GetUserId(string userName);
     }
 }

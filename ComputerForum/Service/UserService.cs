@@ -59,6 +59,10 @@ namespace ComputerForum.Service
             }
 
         }
+        public int? GetUserId(string userName)
+        {
+            return _userRepository.GetUserIdByName(userName);
+        }
 
     }
 }

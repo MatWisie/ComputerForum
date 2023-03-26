@@ -7,8 +7,8 @@ namespace ComputerForum.Service
     public class TopicService : ITopicService
     {
         private readonly ITopicRepository _topicRepository;
-        private readonly ICommentsRepository _commentsRepository;
-        public TopicService(ITopicRepository topicRepository, ICommentsRepository commentsRepository)
+        private readonly ICommentRepository _commentsRepository;
+        public TopicService(ITopicRepository topicRepository, ICommentRepository commentsRepository)
         {
             _topicRepository = topicRepository;
             _commentsRepository = commentsRepository;
