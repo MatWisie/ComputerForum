@@ -1,9 +1,10 @@
-﻿using ComputerForum.Models;
+﻿using ComputerForum.Interfaces;
+using ComputerForum.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComputerForum.Data
 {
-    public class ForumDbContext : DbContext
+    public class ForumDbContext : DbContext, IForumDbContext
     {
         public ForumDbContext(DbContextOptions<ForumDbContext> options) : base(options)
         {
