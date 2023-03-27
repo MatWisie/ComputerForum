@@ -3,6 +3,7 @@ using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ComputerForum.Controllers
 {
@@ -10,10 +11,12 @@ namespace ComputerForum.Controllers
     {
         private readonly ITopicService _topicService;
         private readonly ICommentService _commentService;
-        public TopicController(ITopicService topicService, ICommentService commentService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor)
         {
             _topicService = topicService;
             _commentService = commentService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Index(int topicId)
@@ -47,6 +50,11 @@ namespace ComputerForum.Controllers
             }
 
             var topic = _topicService.GetTopic(topicId);
+            if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
+            {
+                return Unauthorized();
+            }
+
             return View(topic);
         }
         [Authorize]
@@ -54,6 +62,11 @@ namespace ComputerForum.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditTopic(TopicVM topic)
         {
+            if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
+            {
+                return Unauthorized();
+            }
+
             if (ModelState.IsValid)
             {
                 _topicService.EditTopic(topic);
@@ -71,6 +84,11 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
+            {
+                return Unauthorized();
+            }
+
             _topicService.DeleteTopic(topic);
             return RedirectToAction("Index", "Home", "");
         }

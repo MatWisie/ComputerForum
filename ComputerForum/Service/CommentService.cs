@@ -7,8 +7,8 @@ namespace ComputerForum.Service
 {
     public class CommentService : ICommentService
     {
-        ICommentRepository _commentRepository;
-        IHttpContextAccessor _httpContextAccessor;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public CommentService(IHttpContextAccessor httpContextAccessor, ICommentRepository commentRepository)
         {
             _httpContextAccessor = httpContextAccessor;
