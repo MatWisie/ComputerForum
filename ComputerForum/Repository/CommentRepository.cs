@@ -20,5 +20,19 @@ namespace ComputerForum.Repository
             _context.Comments.Add(comment);
             _context.SaveChanges();
         }
+        public Comment GetComment(int commentId)
+        {
+            return _context.Comments.FirstOrDefault(e => e.Id == commentId);
+        }
+        public void EditComment(Comment comment)
+        {
+            _context.Comments.Update(comment);
+            _context.SaveChanges();
+        }
+        public void DeleteComment(Comment comment)
+        {
+            _context.Comments.Remove(comment);
+            _context.SaveChanges();
+        }
     }
 }

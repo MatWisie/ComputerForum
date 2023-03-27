@@ -74,10 +74,64 @@ namespace ComputerForum.Controllers
             }
             return View(topic);
         }
+
+        [Authorize]
+        public IActionResult EditComment(int commentId)
+        {
+            if (commentId == null || commentId == 0)
+            {
+                return NotFound();
+            }
+
+            var comment = _commentService.GetComment(commentId);
+            if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
+            {
+                return Unauthorized();
+            }
+
+            return View(comment);
+        }
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int topicId)
+        public IActionResult EditComment(CommentVM comment)
+        {
+            if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
+            {
+                return Unauthorized();
+            }
+
+            if (ModelState.IsValid)
+            {
+                _commentService.EditComment(comment);
+                return RedirectToAction("Index", "Home", "");
+            }
+            return View(comment);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteComment(int commentId)
+        {
+            var comment = _commentService.GetComment(commentId);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
+            {
+                return Unauthorized();
+            }
+
+            _commentService.DeleteComment(comment);
+            return RedirectToAction("Index", "Home", "");
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteTopic(int topicId)
         {
             var topic = _topicService.GetTopic(topicId);
             if(topic == null)

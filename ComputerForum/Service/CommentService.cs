@@ -26,5 +26,26 @@ namespace ComputerForum.Service
             };
             _commentRepository.AddComment(tmp);
         }
+
+        public Comment GetComment(int commentId)
+        {
+            return _commentRepository.GetComment(commentId);
+        }
+
+        public void EditComment(CommentVM comment)
+        {
+            Comment tmp = new Comment
+            {
+                Content = comment.Content,
+                QuotedStatement = comment.QuotedStatement,
+                CreatorId = comment.CreatorId,
+                TopicId = comment.TopicId
+            };
+            _commentRepository.EditComment(tmp);
+        }
+        public void DeleteComment(Comment comment)
+        {
+            _commentRepository.DeleteComment(comment);
+        }
     }
 }
