@@ -28,6 +28,7 @@ builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();

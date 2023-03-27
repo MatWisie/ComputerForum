@@ -1,5 +1,6 @@
 ﻿using ComputerForum.Interfaces;
 using ComputerForum.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,59 +18,61 @@ namespace ComputerForum.Controllers
 
         public IActionResult Index(int topicId)
         {
-            var topic = _topicService.GetTopic(topicId);
+            if(topicId == null || topicId == 0)
+            {
+                return NotFound();
+            }
+            var topic = _topicService.GetTopicWithComments(topicId);
             return View(topic);
         }
 
-        // POST: TopicController/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateComment(CommentCreateVM comment)
         {
-            _commentService.AddComment(comment);
-            return RedirectToAction("Index", comment.TopicId);
+            if (ModelState.IsValid)
+            {
+                _commentService.AddComment(comment);
+                return RedirectToAction("Index", comment.TopicId);
+            }
+            return View(comment);
         }
-
-        // GET: TopicController/Edit/5
-        public IActionResult Edit(int id)
+        [Authorize]
+        public IActionResult EditTopic(int topicId)
         {
-            return View();
-        }
+            if (topicId == null || topicId == 0)
+            {
+                return NotFound();
+            }
 
-        // POST: TopicController/Edit/5
+            var topic = _topicService.GetTopic(topicId);
+            return View(topic);
+        }
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, IFormCollection collection)
+        public IActionResult EditTopic(TopicVM topic)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _topicService.EditTopic(topic);
+                return RedirectToAction("Index", "Home", "");
             }
-            catch
-            {
-                return View();
-            }
+            return View(topic);
         }
-
-        // GET: TopicController/Delete/5
-        public IActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: TopicController/Delete/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id, IFormCollection collection)
+        public IActionResult Delete(int topicId)
         {
-            try
+            var topic = _topicService.GetTopic(topicId);
+            if(topic == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+            _topicService.DeleteTopic(topic);
+            return RedirectToAction("Index", "Home", "");
         }
     }
 }

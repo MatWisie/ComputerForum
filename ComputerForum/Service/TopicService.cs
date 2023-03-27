@@ -17,7 +17,7 @@ namespace ComputerForum.Service
         {
             return _topicRepository.GetTopics(categoryName).ToList();
         }
-        public TopicWithComments? GetTopic(int id)
+        public TopicWithComments? GetTopicWithComments(int id)
         {
             var topic = _topicRepository.GetTopic(id);
             var comments = _commentsRepository.GetTopicComments(id).ToList();
@@ -32,6 +32,30 @@ namespace ComputerForum.Service
                 return tmp;
             }
             return null;
+        }
+        public Topic? GetTopic(int id)
+        {
+            var topic = _topicRepository.GetTopic(id);
+            if (topic != null)
+            {
+                return topic;
+            }
+            return null;
+        }
+        public void EditTopic(TopicVM topic)
+        {
+            Topic tmp = new Topic
+            {
+                Title = topic.Title,
+                Description = topic.Description,
+                CategoryId = topic.CategoryId,
+                CreatorId = topic.CreatorId
+            };
+            _topicRepository.EditTopic(tmp);
+        }
+        public void DeleteTopic(Topic topic)
+        {
+            _topicRepository.DeleteTopic(topic);
         }
     }
 }

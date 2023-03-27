@@ -21,6 +21,16 @@ namespace ComputerForum.Repository
         {
             return _context.Topics.FirstOrDefault(e => e.Id == id);
         }
+        public void EditTopic(Topic topic)
+        {
+            _context.Topics.Update(topic);
+            _context.SaveChanges();
+        }
+        public void DeleteTopic(Topic topic)
+        {
+            _context.Topics.Remove(topic);
+            _context.SaveChanges();
+        }
 
     }
 }
