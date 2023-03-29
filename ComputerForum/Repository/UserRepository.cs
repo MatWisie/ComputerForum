@@ -17,6 +17,14 @@ namespace ComputerForum.Repository
         {
             return _context.Users.FirstOrDefault(e => e.Name == userVM.Name);
         }
+        public int? GetUserIdByName(string userName)
+        {
+            return _context.Users.FirstOrDefault(e => e.Name == userName).Id;
+        }
+        public User? GetUserById(int userId)
+        {
+            return _context.Users.FirstOrDefault(e => e.Id == userId);
+        }
         public bool CheckIfUserExists(UserRegisterVM userVM)
         {
             return _context.Users.Any(e => e.Name == userVM.Name);
@@ -24,6 +32,11 @@ namespace ComputerForum.Repository
         public void AddUser(User user)
         {
             _context.Users.Add(user);
+            _context.SaveChanges();
+        }
+        public void AddReputation(User user)
+        {
+            _context.Users.Update(user);
             _context.SaveChanges();
         }
     }

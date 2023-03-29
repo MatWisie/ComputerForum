@@ -7,6 +7,9 @@ namespace ComputerForum.Interfaces
     {
         void AddUser(User user);
         User GetUser(UserLoginVM userVM);
+        int? GetUserIdByName(string userName);
+        User? GetUserById(int userId);
         public bool CheckIfUserExists(UserRegisterVM userVM);
+        void AddReputation(User user);
     }
 }

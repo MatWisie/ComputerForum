@@ -8,7 +8,7 @@ namespace ComputerForum.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
         [Required]
         public string Content { get; set; }
         public string? QuotedStatement { get; set; }
