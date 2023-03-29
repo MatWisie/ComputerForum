@@ -62,7 +62,18 @@ namespace ComputerForum.Service
         public int? GetUserId(string userName)
         {
             return _userRepository.GetUserIdByName(userName);
+        }        
+        public User? GetUserById(int userId)
+        {
+            return _userRepository.GetUserById(userId);
         }
+        public void AddReputation(int userId, int number)
+        {
+            var user = _userRepository.GetUserById(userId);
+            user.Reputation += number;
+            _userRepository.AddReputation(user);
+        }
+
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using ComputerForum.ViewModels;
+﻿using ComputerForum.Models;
+using ComputerForum.ViewModels;
 using System.Net;
 
 namespace ComputerForum.Interfaces
@@ -8,5 +9,7 @@ namespace ComputerForum.Interfaces
         UserLoginVM? LoginUser(UserLoginVM userVM);
         public bool AddUser(UserRegisterVM userVM);
         int? GetUserId(string userName);
+        User? GetUserById(int userId);
+        void AddReputation(int userId, int number);
     }
 }

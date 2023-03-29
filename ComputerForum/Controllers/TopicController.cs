@@ -11,12 +11,16 @@ namespace ComputerForum.Controllers
     {
         private readonly ITopicService _topicService;
         private readonly ICommentService _commentService;
+        private readonly IReputationService _reputationService;
+        private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor)
+        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService)
         {
             _topicService = topicService;
             _commentService = commentService;
             _httpContextAccessor = httpContextAccessor;
+            _userService = userService;
+            _reputationService = reputationService;
         }
 
         public IActionResult Index(int topicId)
@@ -145,6 +149,34 @@ namespace ComputerForum.Controllers
 
             _topicService.DeleteTopic(topic);
             return RedirectToAction("Index", "Home", "");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReputationButton(int topicId, bool isPositive)
+        {
+            var topic = _topicService.GetTopic(topicId);
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            string result = _reputationService.AddToClickedReputations(topic.CreatorId, topicId, isPositive);
+            if(result == "Added")
+            {
+                TempData["ReputationResult"] = "Added reputation";
+                return Ok();
+            }
+            if (result == "Deleted")
+            {
+                TempData["ReputationResult"] = "Reputation canceled";
+                return Ok();
+            }
+            else
+            {
+                TempData["ReputationResult"] = "Something went wrong";
+                return BadRequest();
+            }
         }
     }
 }
