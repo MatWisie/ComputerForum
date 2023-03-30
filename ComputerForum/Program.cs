@@ -32,6 +32,8 @@ builder.Services.AddScoped<IReputationService, ReputationService>();
 builder.Services.AddScoped<IReputationRepository, ReputationRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddHttpContextAccessor();
 
 
