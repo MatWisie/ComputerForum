@@ -32,5 +32,11 @@ namespace ComputerForum.Repository
             _context.SaveChanges();
         }
 
+        public void AddTopic(Topic topic)
+        {
+            _context.Topics.Add(topic);
+            _context.SaveChanges();
+        }
+
     }
 }

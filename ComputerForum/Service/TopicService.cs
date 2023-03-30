@@ -58,5 +58,10 @@ namespace ComputerForum.Service
         {
             _topicRepository.DeleteTopic(topic);
         }
+
+        public void AddTopic(Topic topic)
+        {
+            _topicRepository.AddTopic(topic);
+        }
     }
 }

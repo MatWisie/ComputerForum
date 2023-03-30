@@ -109,6 +109,25 @@ namespace ComputerForum.Controllers
             return View(topics);
         }
 
+        [Authorize]
+        public IActionResult AddTopic(int categoryId)
+        {
+            return View(categoryId);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult AddTopic(Topic topic)
+        {
+            if (ModelState.IsValid)
+            {
+                _topicService.AddTopic(topic);
+                return RedirectToAction("Topic", topic.CategoryId);
+            }
+            return View(topic);
+            
+        }
+
         public IActionResult TopicRedirect(int topicId)
         {
             if (topicId == null || topicId == 0)
