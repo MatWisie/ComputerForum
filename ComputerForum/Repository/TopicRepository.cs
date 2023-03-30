@@ -13,9 +13,9 @@ namespace ComputerForum.Repository
             _context = context;
         }
 
-        public IEnumerable<Topic> GetTopics(string categoryName)
+        public IEnumerable<Topic> GetTopics(int categoryId)
         {
-            return _context.Topics.Where(e => e.Category.Name == categoryName);
+            return _context.Topics.Where(e => e.Category.Id == categoryId);
         }
         public Topic? GetTopic(int id)
         {
@@ -29,6 +29,12 @@ namespace ComputerForum.Repository
         public void DeleteTopic(Topic topic)
         {
             _context.Topics.Remove(topic);
+            _context.SaveChanges();
+        }
+
+        public void AddTopic(Topic topic)
+        {
+            _context.Topics.Add(topic);
             _context.SaveChanges();
         }
 
