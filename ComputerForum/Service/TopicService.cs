@@ -13,9 +13,9 @@ namespace ComputerForum.Service
             _topicRepository = topicRepository;
             _commentsRepository = commentsRepository;
         }
-        public IList<Topic> GetTopics(string categoryName)
+        public IList<Topic> GetTopics(int categoryId)
         {
-            return _topicRepository.GetTopics(categoryName).ToList();
+            return _topicRepository.GetTopics(categoryId).ToList();
         }
         public TopicWithComments? GetTopicWithComments(int id)
         {
@@ -46,6 +46,7 @@ namespace ComputerForum.Service
         {
             Topic tmp = new Topic
             {
+                Id = topic.Id,
                 Title = topic.Title,
                 Description = topic.Description,
                 CategoryId = topic.CategoryId,

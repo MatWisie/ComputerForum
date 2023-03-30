@@ -1,21 +1,121 @@
-﻿using ComputerForum.Models;
+﻿using ComputerForum.Interfaces;
+using ComputerForum.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace ComputerForum.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ICategoryService _categoryService;
+        private readonly ITopicService _topicService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
+            _categoryService = categoryService;
+            _topicService = topicService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Index()
         {
+            var categories = _categoryService.GetCategories();
+            return View(categories);
+        }
+        [Authorize]
+        public IActionResult AddCategory()
+        {
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            {
+                return Unauthorized();
+            }
             return View();
+        }
+        [HttpPost]
+        [Authorize]
+        public IActionResult AddCategory(Category category)
+        {
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            {
+                return Unauthorized();
+            }
+            if (ModelState.IsValid)
+            {
+                _categoryService.AddCategory(category);
+                return RedirectToAction("Index");
+            }
+            return View(category);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult DeleteCategory(int categoryId)
+        {
+            var category = _categoryService.GetCategoryById(categoryId);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            {
+                return Unauthorized();
+            }
+
+            _categoryService.DeleteCategory(category);
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        public IActionResult EditCategory(int categoryId)
+        {
+            var category = _categoryService.GetCategoryById(categoryId);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
+            {
+                return Unauthorized();
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult EditCategory(Category category)
+        {
+            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
+            {
+                return Unauthorized();
+            }
+            if (ModelState.IsValid)
+            {
+                _categoryService.EditCategory(category);
+                return RedirectToAction("Index");
+            }
+            return View(category);
+        }
+        
+
+        public IActionResult Topic(int categoryId)
+        {
+            var topics = _topicService.GetTopics(categoryId);
+            return View(topics);
+        }
+
+        public IActionResult TopicRedirect(int topicId)
+        {
+            if (topicId == null || topicId == 0)
+            {
+                return NotFound();
+            }
+            return RedirectToAction("Index", "Topic", topicId);
         }
 
         public IActionResult Privacy()

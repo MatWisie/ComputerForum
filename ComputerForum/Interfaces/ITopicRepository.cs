@@ -4,7 +4,7 @@ namespace ComputerForum.Interfaces
 {
     public interface ITopicRepository
     {
-        IEnumerable<Topic> GetTopics(string categoryName);
+        IEnumerable<Topic> GetTopics(int categoryId);
         Topic? GetTopic(int id);
         void EditTopic(Topic topic);
         void DeleteTopic(Topic topic);

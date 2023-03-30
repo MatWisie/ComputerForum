@@ -13,9 +13,9 @@ namespace ComputerForum.Repository
             _context = context;
         }
 
-        public IEnumerable<Topic> GetTopics(string categoryName)
+        public IEnumerable<Topic> GetTopics(int categoryId)
         {
-            return _context.Topics.Where(e => e.Category.Name == categoryName);
+            return _context.Topics.Where(e => e.Category.Id == categoryId);
         }
         public Topic? GetTopic(int id)
         {
