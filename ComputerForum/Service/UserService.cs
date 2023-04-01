@@ -71,7 +71,11 @@ namespace ComputerForum.Service
         {
             var user = _userRepository.GetUserById(userId);
             user.Reputation += number;
-            _userRepository.AddReputation(user);
+            _userRepository.UpdateUser(user);
+        }
+        public void UpdateUser(User user)
+        {
+            _userRepository.UpdateUser(user);
         }
 
 
