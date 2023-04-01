@@ -1,4 +1,5 @@
 ﻿using ComputerForum.Interfaces;
+using ComputerForum.Models;
 using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,14 +14,16 @@ namespace ComputerForum.Controllers
         private readonly ICommentService _commentService;
         private readonly IReputationService _reputationService;
         private readonly IUserService _userService;
+        private readonly IReportService _reportService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService)
+        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService)
         {
             _topicService = topicService;
             _commentService = commentService;
             _httpContextAccessor = httpContextAccessor;
             _userService = userService;
             _reputationService = reputationService;
+            _reportService = reportService;
         }
 
         public IActionResult Index(int topicId)
@@ -151,6 +154,7 @@ namespace ComputerForum.Controllers
             return RedirectToAction("Index", "Home", "");
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ReputationButton(int topicId, bool isPositive)
@@ -177,6 +181,23 @@ namespace ComputerForum.Controllers
                 TempData["ReputationResult"] = "Something went wrong";
                 return BadRequest();
             }
+        }
+
+        [Authorize]
+        public IActionResult ReportTopic(int topicId)
+        {
+            return View(topicId);
+        }
+        [Authorize]
+        [HttpPost]
+        public IActionResult ReportTopic(Report report)
+        {
+            if (ModelState.IsValid)
+            {
+                _reportService.AddReport(report);
+                return RedirectToAction("Index", report.TopicId);
+            }
+            return View(report);
         }
     }
 }
