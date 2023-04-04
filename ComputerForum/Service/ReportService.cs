@@ -18,7 +18,7 @@ namespace ComputerForum.Service
             return _reportRepository.GetReports().ToList();
         }
 
-        public Report GetReport(int reportId)
+        public Report? GetReport(int reportId)
         {
             return _reportRepository.GetReport(reportId);
         }

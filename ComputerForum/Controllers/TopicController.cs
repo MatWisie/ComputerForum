@@ -168,18 +168,15 @@ namespace ComputerForum.Controllers
             string result = _reputationService.AddToClickedReputations(topic.CreatorId, topicId, isPositive);
             if(result == "Added")
             {
-                TempData["ReputationResult"] = "Added reputation";
-                return Ok();
+                return Ok("Added reputation");
             }
             if (result == "Deleted")
             {
-                TempData["ReputationResult"] = "Reputation canceled";
-                return Ok();
+                return Ok("Reputation canceled");
             }
             else
             {
-                TempData["ReputationResult"] = "Something went wrong";
-                return BadRequest();
+                return BadRequest("Something went wrong");
             }
         }
 

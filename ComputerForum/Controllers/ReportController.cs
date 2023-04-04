@@ -1,4 +1,5 @@
 ﻿using ComputerForum.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,8 +16,7 @@ namespace ComputerForum.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-
-        // GET: ReportController
+        [Authorize]
         public IActionResult Index()
         {
             if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
@@ -28,18 +28,22 @@ namespace ComputerForum.Controllers
             return View(reports);
         }
 
-        // GET: ReportController/Details/5
+        [Authorize]
         public IActionResult Details(int reportId)
         {
             if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
             {
                 return Unauthorized();
             }
+            if(reportId == 0 || reportId == null)
+            {
+                return NotFound();
+            }
             var report = _reportService.GetReport(reportId);
             return View(report);
         }
 
-        // POST: ReportController/Delete/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int reportId)
@@ -48,15 +52,24 @@ namespace ComputerForum.Controllers
             {
                 return Unauthorized();
             }
+            if (reportId == 0 || reportId == null)
+            {
+                return NotFound();
+            }
             _reportService.DeleteReport(reportId);
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public IActionResult AcceptReport(int reportId)
         {
             if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
             {
                 return Unauthorized();
+            }
+            if (reportId == 0 || reportId == null)
+            {
+                return NotFound();
             }
             _reportService.AcceptReport(reportId);
             return RedirectToAction("Index");
