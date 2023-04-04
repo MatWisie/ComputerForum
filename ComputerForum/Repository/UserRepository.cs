@@ -13,6 +13,7 @@ namespace ComputerForum.Repository
         {
             _context = context;
         }
+
         public User? GetUser(UserLoginVM userVM)
         {
             return _context.Users.FirstOrDefault(e => e.Name == userVM.Name);
@@ -34,7 +35,7 @@ namespace ComputerForum.Repository
             _context.Users.Add(user);
             _context.SaveChanges();
         }
-        public void AddReputation(User user)
+        public void UpdateUser(User user)
         {
             _context.Users.Update(user);
             _context.SaveChanges();

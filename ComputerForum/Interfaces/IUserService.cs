@@ -11,5 +11,6 @@ namespace ComputerForum.Interfaces
         int? GetUserId(string userName);
         User? GetUserById(int userId);
         void AddReputation(int userId, int number);
+        void UpdateUser(User user);
     }
 }

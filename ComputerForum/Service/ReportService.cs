@@ -6,11 +6,11 @@ namespace ComputerForum.Service
     public class ReportService : IReportService
     {
         private readonly IReportRepository _reportRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public ReportService(IReportRepository reportRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly IUserRepository _userRepository;
+        public ReportService(IReportRepository reportRepository, IUserRepository userRepository)
         {
             _reportRepository = reportRepository;
-            _httpContextAccessor = httpContextAccessor;
+            _userRepository = userRepository;
         }
 
         public IList<Report> GetReports()
@@ -18,7 +18,7 @@ namespace ComputerForum.Service
             return _reportRepository.GetReports().ToList();
         }
 
-        public Report GetReport(int reportId)
+        public Report? GetReport(int reportId)
         {
             return _reportRepository.GetReport(reportId);
         }
@@ -27,9 +27,24 @@ namespace ComputerForum.Service
         {
             _reportRepository.AddReport(report);
         }
-        public void DeleteReport(Report report)
+        public void DeleteReport(int reportId)
         {
-            _reportRepository.DeleteReport(report);
+            if(_reportRepository.GetReport(reportId) != null)
+                _reportRepository.DeleteReport(reportId);
+        }
+
+        public void AcceptReport(int reportId)
+        {
+            var report = _reportRepository.GetReport(reportId);
+            if (report != null)
+            {
+                var user = _userRepository.GetUserById(report.ReportedUserId);
+                if(user != null)
+                {
+                    user.Active = false;
+                    _userRepository.UpdateUser(user);
+                }
+            }
         }
     }
 }

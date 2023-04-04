@@ -10,6 +10,6 @@ namespace ComputerForum.Interfaces
         int? GetUserIdByName(string userName);
         User? GetUserById(int userId);
         public bool CheckIfUserExists(UserRegisterVM userVM);
-        void AddReputation(User user);
+        void UpdateUser(User user);
     }
 }
