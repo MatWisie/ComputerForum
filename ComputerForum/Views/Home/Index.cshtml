@@ -1,8 +1,22 @@
-﻿@{
+﻿@model IEnumerable<Category>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<div>
+    <h1>Forum Categories</h1>
+    @foreach(var category in Model)
+    {
+        <div>
+            <h2>@category.Name</h2>
+            @foreach(var topic in @category.Topics)
+            {
+                <div>@topic.Title</div> 
+            }
+        </div>
+    }
 </div>

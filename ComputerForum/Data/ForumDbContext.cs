@@ -1,6 +1,7 @@
 ﻿using ComputerForum.Interfaces;
 using ComputerForum.Models;
 using Microsoft.EntityFrameworkCore;
+using ComputerForum.ViewModels;
 
 namespace ComputerForum.Data
 {
@@ -50,5 +51,6 @@ namespace ComputerForum.Data
         public DbSet<Report> Reports { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ComputerForum.ViewModels.TopicVM>? TopicVM { get; set; }
     }
 }
