@@ -1,0 +1,39 @@
+﻿@model ComputerForum.ViewModels.UserRegisterVM;
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+<form asp-action="Register" id="register-form">
+    <div class="form-group">
+        <label for="emailInput">Enter Email</label>
+        <input asp-for="Email" type="email" id="emailInput" class="form-control" placeholder="Email"/>
+    </div>
+    <div class="form-group">
+        <label for="usernameInput" >Enter Username</label>
+        <input asp-for="Name" type="text" id="usernameInput" class="form-control" placeholder="Username"/>
+    </div>
+    <div class="form-group">
+        <label>Enter Password</label>
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password"/>
+
+        <label for="confirmPasswordInput">Confirm Password</label>
+        <input type="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
+
+        <label asp-for="Age"></label>
+        <input id="ageInput" type="number" />
+
+        <label asp-for="Gender"></label>
+        <select asp-for="Gender">
+            <option value="Male"></option>
+            <option value="Female"></option>
+            <option value="Other"></option>
+        </select>
+    </div>
+    <button class="btn btn-primary">Register</button>
+</form>
+<small>Already have an account? - <a asp-area="" asp-controller="Home" asp-action="LogIn">Log in</a> instead</small>
+ <script>
+     $("#register-form").submit(function(e) {
+    e.preventDefault();
+});
