@@ -8,26 +8,38 @@ namespace ComputerForum.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IMailService _mailService;
+        public UserService(IUserRepository userRepository, IMailService mailService)
         {
             _userRepository = userRepository;
+            _mailService = mailService;
         }
 
-        public UserLoginVM? LoginUser(UserLoginVM userVM)
+        public UserLoginVMResponse? LoginUser(UserLoginVM userVM)
         {
             var user = _userRepository.GetUser(userVM);
-            if (user != null)
+            if (user != null && BCrypt.Net.BCrypt.Verify(userVM.Password, user.Password))
             {
-                if (BCrypt.Net.BCrypt.Verify(userVM.Password, user.Password))
+                if(user.Admin == true)
                 {
-                    UserLoginVM tmpUserVM = new UserLoginVM()
+                    UserLoginVMResponse tmpUserVM = new UserLoginVMResponse()
                     {
                         Name = user.Name,
-                        Password = user.Password
+                        Password = user.Password,
+                        Admin = true
                     };
                     return tmpUserVM;
                 }
-                return null;
+                else
+                {
+                    UserLoginVMResponse tmpUserVM = new UserLoginVMResponse()
+                    {
+                        Name = user.Name,
+                        Password = user.Password,
+                        Admin = false
+                    };
+                    return tmpUserVM;
+                }
             }
             return null;
         }
@@ -50,6 +62,13 @@ namespace ComputerForum.Service
                     Reputation = userVM.Reputation,
                 };
                 _userRepository.AddUser(tmpUserVM);
+                _mailService.SendMail
+                    (tmpUserVM.Email,
+                    "Computer forum registration", 
+                    $"Hello {tmpUserVM.Name}, we're glad you're here! \n " +
+                    $"From now on, you can ask questions that bother you and help the community by answering other people's questions and participate in the life of our site \n" +
+                    $"Thank you, Computer Forum team"
+                    );
 
                 return true;
             }

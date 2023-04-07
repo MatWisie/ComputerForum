@@ -6,7 +6,7 @@ namespace ComputerForum.Interfaces
     {
         void AddReport(Report report);
         void DeleteReport(int reportId);
-        Report? GetReport(int reportId)
+        Report? GetReport(int reportId);
         IList<Report> GetReports();
         void AcceptReport(int reportId);
     }
