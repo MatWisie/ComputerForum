@@ -29,6 +29,7 @@ namespace ComputerForum.Controllers
                 if (user != null)
                 {
                     int? userId = _userService.GetUserId(user.Name);
+                    
                     var claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),

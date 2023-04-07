@@ -6,7 +6,7 @@ namespace ComputerForum.Interfaces
 {
     public interface IUserService
     {
-        UserLoginVM? LoginUser(UserLoginVM userVM);
+        UserLoginVMResponse? LoginUser(UserLoginVM userVM);
         public bool AddUser(UserRegisterVM userVM);
         int? GetUserId(string userName);
         User? GetUserById(int userId);

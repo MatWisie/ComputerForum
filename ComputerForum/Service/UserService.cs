@@ -15,21 +15,31 @@ namespace ComputerForum.Service
             _mailService = mailService;
         }
 
-        public UserLoginVM? LoginUser(UserLoginVM userVM)
+        public UserLoginVMResponse? LoginUser(UserLoginVM userVM)
         {
             var user = _userRepository.GetUser(userVM);
-            if (user != null)
+            if (user != null && BCrypt.Net.BCrypt.Verify(userVM.Password, user.Password))
             {
-                if (BCrypt.Net.BCrypt.Verify(userVM.Password, user.Password))
+                if(user.Admin == true)
                 {
-                    UserLoginVM tmpUserVM = new UserLoginVM()
+                    UserLoginVMResponse tmpUserVM = new UserLoginVMResponse()
                     {
                         Name = user.Name,
-                        Password = user.Password
+                        Password = user.Password,
+                        Admin = true
                     };
                     return tmpUserVM;
                 }
-                return null;
+                else
+                {
+                    UserLoginVMResponse tmpUserVM = new UserLoginVMResponse()
+                    {
+                        Name = user.Name,
+                        Password = user.Password,
+                        Admin = false
+                    };
+                    return tmpUserVM;
+                }
             }
             return null;
         }
