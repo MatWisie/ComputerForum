@@ -51,6 +51,5 @@ namespace ComputerForum.Data
         public DbSet<Report> Reports { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<ComputerForum.ViewModels.TopicVM>? TopicVM { get; set; }
     }
 }
