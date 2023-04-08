@@ -12,7 +12,7 @@ namespace ComputerForum.ViewModels
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
         [MinLength(8, ErrorMessage = "Password must be at least eight characters long")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter and one number")]
+        [RegularExpression(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,100}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter and one number")]
         public string Password { get; set; }
         [Required(ErrorMessage = "Age is required")]
         public int Age { get; set; }

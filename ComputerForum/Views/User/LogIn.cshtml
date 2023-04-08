@@ -5,18 +5,13 @@
 <h1>Log In</h1>
 <form asp-action="Login" itemid="login-form">
     <div class="form-group">
-        <label  for="emailInput">Enter Email</label>
-        <input asp-for="Name" type="email" id="emailInput" class="form-control" placeholder="Email"/>
+        <label  asp-for="Name"></label>
+        <input asp-for="Name" type="text" id="nameInput" class="form-control" placeholder="Username"/>
     </div>
     <div class="form-group">
-        <label>Enter Password</label>
+        <label asp-for="Password"></label>
         <input asp-for="Password" type="password" class="form-control" placeholder="Password"/>
     </div>
-    <button class="submit-btn btn btn-primary">Log In</button>
+    <button class="submit-btn btn btn-primary" type="submit">Log In</button>
 </form>
  <small>Don't have an account? - <a asp-area="" asp-controller="Home" asp-action="Register">Register</a> instead</small>
- <script>
-     $("#login-form").submit(function(e) {
-    e.preventDefault();
-});
- </script>
