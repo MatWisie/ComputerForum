@@ -1,0 +1,20 @@
+﻿@model ComputerForum.ViewModels.TopicWithComments;
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@Model.topic</h1>
+@foreach (var comment in @Model.comments)
+{
+    <article class="comment-container">
+        <div class="comment-content">
+            <div>@comment.CreatorId
+                name
+                date joined
+                reputation
+            </div>
+            <div>@comment.CreationDate</div>
+            <div>@comment.Content</div>
+        </div>
+    </article>
+}
