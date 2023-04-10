@@ -1,0 +1,16 @@
+﻿@model ComputerForum.Models.Category
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+@foreach(var topic in Model.Topics)
+{
+    <article>
+        <div><h2>@topic.Title</h2></div>
+        <div>@topic.Description</div>
+        <div>@topic.CreationDate</div>
+        <div>@topic.CreatorId</div>
+    </article>
+}
+
