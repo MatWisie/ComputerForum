@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Category>
+﻿@model IList<Category>
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -9,14 +9,20 @@
 </div>
 <div>
     <h1>Forum Categories</h1>
-    @foreach(var category in Model)
-    {
-        <div>
-            <h2>@category.Name</h2>
-            @foreach(var topic in @category.Topics)
-            {
-                <div>@topic.Title</div> 
-            }
-        </div>
-    }
+    <table class="table table-dark table-hover">
+        <thead>
+            <th>Name</th>
+            <th>Creator</th>
+            <th>Date</th>
+        </thead>
+        @foreach(var category in Model)
+        {
+            <tr onclick="location.href = '@Url.Action("Topic", @category.Id)'"> <!--Which I HOPE will soon be added-->
+                <td>@category.Name</td>
+                <td>@category.User.Name</td>
+                <td>@category.CreationDate.ToShortDateString()</td>
+            </tr>
+        }
+        <!-- Job for you, make it look good and fancy mkay? -->
+    </table>
 </div>

@@ -1,6 +1,8 @@
 ﻿using ComputerForum.Data;
 using ComputerForum.Interfaces;
 using ComputerForum.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ComputerForum.Repository
 {
@@ -14,7 +16,7 @@ namespace ComputerForum.Repository
 
         public IEnumerable<Category> GetCategories()
         {
-            return _context.Categories;
+            return _context.Categories.Include(e => e.User);
         }
         public void AddCategory(Category category)
         {

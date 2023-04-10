@@ -5,20 +5,14 @@
 <h1>Log In</h1>
 <form asp-action="Login" itemid="login-form">
     <div class="form-group">
-        <label  for="nameInput">Enter User Name</label>
-        <input asp-for="Name" id="nameInput" class="form-control" placeholder="Name"/>
-        @Html.ValidationMessageFor(model => model.Name);
+        <label  asp-for="Name"></label>
+        <input asp-for="Name" type="text" id="nameInput" class="form-control" placeholder="Username"/>
     </div>
     <div class="form-group">
-        <label>Enter Password</label>
+        <label asp-for="Password"></label>
         <input asp-for="Password" type="password" class="form-control" placeholder="Password"/>
         @Html.ValidationMessageFor(model => model.Password);
     </div>
-    <button type="submit" class="submit-btn btn btn-primary">Log In</button>
+    <button class="submit-btn btn btn-primary" type="submit">Log In</button>
 </form>
  <small>Don't have an account? - <a asp-area="" asp-controller="Home" asp-action="Register">Register</a> instead</small>
- <script>
-     $("#login-form").submit(function(e) {
-    e.preventDefault();
-});
- </script>

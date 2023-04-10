@@ -70,7 +70,7 @@ namespace ComputerForum.Controllers
                     return RedirectToAction("Login");
                 }
                 ModelState.AddModelError("", "User with that name already exists");
-                return View(userVM);
+                return RedirectToAction("Login");
             }
             return View(userVM);
         }
