@@ -9,4 +9,21 @@
 </div>
 <div>
     <h1>Forum topics</h1>
+
+    <table class="table table-dark table-hover">
+        <thead>
+            <th>Name</th>
+            <th>Creator</th>
+            <th>Date</th>
+        </thead>
+        @foreach(var topic in Model)
+        {
+            <tr onclick="location.href = '@Url.Action("Index","Topic", new {id = @topic.Id})'"> <!--Which I HOPE will soon be added-->
+                <td>@topic.Title</td>
+                <td>@topic.User.Name</td>
+                <td>@topic.CreationDate.ToShortDateString()</td>
+            </tr>
+        }
+        <!-- Job for you, make it look good and fancy mkay? -->
+    </table>
 </div>
