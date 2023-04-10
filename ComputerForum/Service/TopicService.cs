@@ -17,19 +17,13 @@ namespace ComputerForum.Service
         {
             return _topicRepository.GetTopics(categoryId).ToList();
         }
-        public TopicWithComments? GetTopicWithComments(int id)
+        public Topic? GetTopicWithComments(int id)
         {
-            var topic = _topicRepository.GetTopic(id);
-            var comments = _commentsRepository.GetTopicComments(id).ToList();
+            var topic = _topicRepository.GetTopicIncludeComments(id);
             if(topic != null)
             {
-                TopicWithComments tmp = new TopicWithComments()
-                {
-                    topic = topic,
-                    comments = comments
 
-                };
-                return tmp;
+                return topic;
             }
             return null;
         }

@@ -1,0 +1,33 @@
+﻿@model ComputerForum.Models.Topic
+
+@{
+    ViewData["Title"] = "Topic";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<div>
+    <h1>Forum topics</h1>
+
+    <table class="table table-dark">
+        <tr>
+            <td>@Model.Title</td><td>@Model.User.Name</td>
+        </tr>
+        <tr>
+            <td>@Model.Description</td>
+        </tr>
+        @foreach(var comment in Model.Comments)
+        {
+            <tr>
+                <td>@comment.User.Name</td><td>@comment.CreationDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td>@comment.Content</td>
+            </tr>
+        }
+        <!-- Job for you, make it look good and fancy mkay? -->
+    </table>
+</div>
+

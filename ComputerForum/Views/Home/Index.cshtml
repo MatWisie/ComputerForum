@@ -17,7 +17,7 @@
         </thead>
         @foreach(var category in Model)
         {
-            <tr onclick="location.href = '@Url.Action("Topic", @category.Id)'"> <!--Which I HOPE will soon be added-->
+            <tr onclick="location.href = '@Url.Action("Topic","Home", new {id = @category.Id})'"> <!--Which I HOPE will soon be added-->
                 <td>@category.Name</td>
                 <td>@category.User.Name</td>
                 <td>@category.CreationDate.ToShortDateString()</td>

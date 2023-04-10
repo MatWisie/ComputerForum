@@ -103,16 +103,16 @@ namespace ComputerForum.Controllers
         }
         
 
-        public IActionResult Topic(int categoryId)
+        public IActionResult Topic(int id)
         {
-            var topics = _topicService.GetTopics(categoryId);
+            var topics = _topicService.GetTopics(id);
             return View(topics);
         }
 
         [Authorize]
-        public IActionResult AddTopic(int categoryId)
+        public IActionResult AddTopic(int id)
         {
-            return View(categoryId);
+            return View(id);
         }
 
         [HttpPost]
@@ -128,13 +128,13 @@ namespace ComputerForum.Controllers
             
         }
 
-        public IActionResult TopicRedirect(int topicId)
+        public IActionResult TopicRedirect(int id)
         {
-            if (topicId == null || topicId == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            return RedirectToAction("Index", "Topic", topicId);
+            return RedirectToAction("Index", "Topic", id);
         }
 
         public IActionResult Privacy()
