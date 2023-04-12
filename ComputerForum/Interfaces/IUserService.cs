@@ -10,6 +10,7 @@ namespace ComputerForum.Interfaces
         public bool AddUser(UserRegisterVM userVM);
         int? GetUserId(string userName);
         User? GetUserById(int userId);
+        User? GetUserByIdWithInclude(int userId);
         void AddReputation(int userId, int number);
         void UpdateUser(User user);
     }

@@ -86,6 +86,10 @@ namespace ComputerForum.Service
         {
             return _userRepository.GetUserById(userId);
         }
+        public User? GetUserByIdWithInclude(int userId)
+        {
+            return _userRepository.GetUserByIdWithInclude(userId);
+        }
         public void AddReputation(int userId, int number)
         {
             var user = _userRepository.GetUserById(userId);

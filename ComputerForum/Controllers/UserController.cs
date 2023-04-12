@@ -1,4 +1,5 @@
 ﻿using ComputerForum.Interfaces;
+using ComputerForum.Models;
 using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -75,10 +76,43 @@ namespace ComputerForum.Controllers
             return View(userVM);
         }
         [Authorize]
-        public async Task Signout()
+        public async Task<IActionResult> Signout()
         {
             await HttpContext.SignOutAsync(
             CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
+        }
+
+        [Authorize]
+        public IActionResult UserDetails()
+        {
+            var user = _userService.GetUserById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            return View(user);
+        }
+
+        [Authorize]
+        public IActionResult UserDetailsEdit()
+        {
+            var user = _userService.GetUserById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            return View(user);
+        }
+        [HttpPost]
+        [Authorize]
+        public IActionResult UserDetailsEdit(User user)
+        {
+            if (ModelState.IsValid)
+            {
+                _userService.UpdateUser(user);
+                RedirectToAction("UserDetails");
+            }
+            return View(user);
+        }
+
+        [Authorize]
+        public IActionResult UserTopics()
+        {
+            var user = _userService.GetUserByIdWithInclude(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            return View(user);
         }
     }
 }
