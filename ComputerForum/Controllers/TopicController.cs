@@ -26,13 +26,13 @@ namespace ComputerForum.Controllers
             _reportService = reportService;
         }
 
-        public IActionResult Index(int topicId)
+        public IActionResult Index(int id)
         {
-            if(topicId == null || topicId == 0)
+            if(id == null || id == 0)
             {
                 return NotFound();
             }
-            var topic = _topicService.GetTopicWithComments(topicId);
+            var topic = _topicService.GetTopicWithComments(id);
             return View(topic);
         }
 

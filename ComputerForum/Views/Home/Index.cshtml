@@ -3,12 +3,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
 <div>
-    <h1>Forum Categories</h1>
+    <h2 >Forum Categories</h2>
     <table class="table table-dark table-hover">
         <thead>
             <th>Name</th>
@@ -17,7 +13,7 @@
         </thead>
         @foreach(var category in Model)
         {
-            <tr onclick="location.href = '@Url.Action("Topic", @category.Id)'"> <!--Which I HOPE will soon be added-->
+            <tr onclick="location.href = '@Url.Action("Topic","Home", new {id = @category.Id})'"> <!--Which I HOPE will soon be added-->
                 <td>@category.Name</td>
                 <td>@category.User.Name</td>
                 <td>@category.CreationDate.ToShortDateString()</td>

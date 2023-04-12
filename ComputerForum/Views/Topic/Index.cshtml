@@ -1,20 +1,33 @@
-﻿@model ComputerForum.ViewModels.TopicWithComments;
+﻿@model ComputerForum.Models.Topic
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Topic";
 }
 
-<h1>@Model.topic</h1>
-@foreach (var comment in @Model.comments)
-{
-    <article class="comment-container">
-        <div class="comment-content">
-            <div>@comment.CreatorId
-                name
-                date joined
-                reputation
-            </div>
-            <div>@comment.CreationDate</div>
-            <div>@comment.Content</div>
-        </div>
-    </article>
-}
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<div>
+    <h1>Forum topics</h1>
+
+    <table class="table table-dark">
+        <tr>
+            <td>@Model.Title</td><td>@Model.User.Name</td>
+        </tr>
+        <tr>
+            <td>@Model.Description</td>
+        </tr>
+        @foreach(var comment in Model.Comments)
+        {
+            <tr>
+                <td>@comment.User.Name</td><td>@comment.CreationDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td>@comment.Content</td>
+            </tr>
+        }
+        <!-- Job for you, make it look good and fancy mkay? -->
+    </table>
+</div>
+
