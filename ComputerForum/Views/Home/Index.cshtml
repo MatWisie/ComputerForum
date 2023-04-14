@@ -5,6 +5,13 @@
 
 <div>
     <h2 >Forum Categories</h2>
+    <section>
+    @if (Model.Count == 0)
+    {
+        <div>There are no categories</div>
+    }
+    else
+    {
     <table class="table table-dark table-hover">
         <thead>
             <th>Name</th>
@@ -19,6 +26,12 @@
                 <td>@category.CreationDate.ToShortDateString()</td>
             </tr>
         }
+
         <!-- Job for you, make it look good and fancy mkay? -->
     </table>
+    }
+    </section>
+    <section>
+        <a asp-controller="Category" asp-action="Add"><button class="btn btn-primary">Add a Category</button></a>
+    </section>
 </div>
