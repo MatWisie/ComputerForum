@@ -13,9 +13,11 @@ namespace ComputerForum.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly ITokenService _tokenService;
+        public UserController(IUserService userService, ITokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
         public IActionResult Login()
         {
@@ -113,6 +115,17 @@ namespace ComputerForum.Controllers
         {
             var user = _userService.GetUserByIdWithInclude(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             return View(user);
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            _tokenService.GenerateForgotPasswordToken(email);
+            return RedirectToAction("Login");
         }
     }
 }
