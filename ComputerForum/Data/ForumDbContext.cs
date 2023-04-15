@@ -43,6 +43,9 @@ namespace ComputerForum.Data
             modelBuilder.Entity<Category>()
                .HasIndex(e => e.Name)
                .IsUnique();
+            modelBuilder.Entity<PasswordResetToken>()
+               .HasIndex(e => e.Token)
+               .IsUnique();
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -51,5 +54,6 @@ namespace ComputerForum.Data
         public DbSet<Report> Reports { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
     }
 }
