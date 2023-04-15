@@ -6,6 +6,7 @@ namespace ComputerForum.Interfaces
     {
         void AddToken(PasswordResetToken token);
         void DeleteToken(PasswordResetToken token);
+        void DeleteUserTokens(int userId);
         PasswordResetToken? GetToken(string token);
     }
 }

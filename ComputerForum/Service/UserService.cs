@@ -100,6 +100,12 @@ namespace ComputerForum.Service
         {
             _userRepository.UpdateUser(user);
         }
+        public void ChangePassword(User user)
+        {
+            string tmpPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = tmpPassword;
+            _userRepository.UpdateUser(user);
+        }
 
 
     }

@@ -82,7 +82,7 @@ namespace ComputerForum.Controllers
         {
             await HttpContext.SignOutAsync(
             CookieAuthenticationDefaults.AuthenticationScheme);
-            return Ok();
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
@@ -126,6 +126,32 @@ namespace ComputerForum.Controllers
         {
             _tokenService.GenerateForgotPasswordToken(email);
             return RedirectToAction("Login");
+        }
+
+        public IActionResult NewUserPassword(string token)
+        {
+            PasswordResetToken? tmpToken = _tokenService.GetForgotPasswordToken(token);
+            if (tmpToken != null)
+            {
+                return View(tmpToken);
+            }
+            return RedirectToAction("Login");
+        }
+        [HttpPost]
+        public IActionResult NewUserPassword(PasswordChangeVM passwordVM)
+        {
+            if (ModelState.IsValid)
+            {
+                User? user = _userService.GetUserById(passwordVM.userId);
+                if (user != null)
+                {
+                    _tokenService.DeleteUserForgotPasswordTokens(passwordVM.userId);
+                    _userService.ChangePassword(user);
+                }
+                return RedirectToAction("Login");
+            }
+            return View(passwordVM);
+
         }
     }
 }

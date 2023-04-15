@@ -19,6 +19,11 @@ namespace ComputerForum.Repository
         {
             _context.PasswordResetTokens.Remove(token);
         }
+        public void DeleteUserTokens(int userId)
+        {
+            var tokens = _context.PasswordResetTokens.Where(e => e.UserId == userId);
+            _context.RemoveRange(tokens);
+        }
         public PasswordResetToken? GetToken(string token)
         {
             return _context.PasswordResetTokens.FirstOrDefault(e => e.Token == token);

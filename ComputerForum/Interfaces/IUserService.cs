@@ -13,5 +13,6 @@ namespace ComputerForum.Interfaces
         User? GetUserByIdWithInclude(int userId);
         void AddReputation(int userId, int number);
         void UpdateUser(User user);
+        void ChangePassword(User user);
     }
 }
