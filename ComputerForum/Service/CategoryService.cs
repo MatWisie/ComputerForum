@@ -39,14 +39,9 @@ namespace ComputerForum.Service
             };
             _categoryRepository.AddCategory(tmp);
         }
-        public void EditCategory(CategoryVM category)
+        public void EditCategory(Category category)
         {
-            Category tmp = new Category
-            {
-                Name = category.Name,
-                CreatorId = category.CreatorId
-            };
-            _categoryRepository.EditCategory(tmp);
+            _categoryRepository.EditCategory(category);
         }
     }
 }

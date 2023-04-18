@@ -91,12 +91,12 @@ namespace ComputerForum.Controllers
                 return Unauthorized();
             }
 
-            return View(category);
+            return View(category); //here hide properties like Id etc. because we dont change those 
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult EditCategory(CategoryVM category)
+        public IActionResult EditCategory(Category category)
         {
             if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
             {

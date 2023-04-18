@@ -9,7 +9,7 @@ namespace ComputerForum.Interfaces
         Category? GetCategoryById(int categoryId);
         void DeleteCategory(Category category);
         void AddCategory(CategoryVM category);
-        void EditCategory(CategoryVM category);
+        void EditCategory(Category category);
         Category? GetCategoryByName(string categoryName);
     }
 }
