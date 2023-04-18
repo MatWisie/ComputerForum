@@ -40,7 +40,6 @@ namespace ComputerForum.Service
         {
             Topic tmp = new Topic
             {
-                Id = topic.Id,
                 Title = topic.Title,
                 Description = topic.Description,
                 CategoryId = topic.CategoryId,
@@ -53,9 +52,16 @@ namespace ComputerForum.Service
             _topicRepository.DeleteTopic(topic);
         }
 
-        public void AddTopic(Topic topic)
+        public void AddTopic(TopicVM topic)
         {
-            _topicRepository.AddTopic(topic);
+            Topic tmp = new Topic
+            {
+                Title = topic.Title,
+                Description = topic.Description,
+                CreatorId = topic.CreatorId,
+                CategoryId = topic.CategoryId
+            };
+            _topicRepository.AddTopic(tmp);
         }
     }
 }
