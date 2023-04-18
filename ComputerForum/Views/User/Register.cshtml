@@ -4,40 +4,51 @@
 }
 
 <h1>Register</h1>
-<form asp-action="Register" id="register-form">
-    <div class="form-group">
-        <label for="emailInput">Enter Email</label>
-        <input asp-for="Email" type="email" id="emailInput" class="form-control" placeholder="Email"/>
-        @Html.ValidationMessageFor(model=>model.Email)
+<form asp-action="Register" id="register-form" class="row gy-2 gx-3 align-items-center">
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <label for="emailInput" class="form-label mt-2">Enter Email</label>
+            <input asp-for="Email" type="email" id="emailInput" class="form-control" placeholder="Email"/>
+            @Html.ValidationMessageFor(model=>model.Email, null, new {@class = "text-danger"})
+        </div>
+        <div class="col-md-6 col-12">
+            <label for="usernameInput" class="form-label mt-2" >Enter Username</label>
+            <input asp-for="Name" type="text" id="usernameInput" class="form-control" placeholder="Username"/>
+            @Html.ValidationMessageFor(model=>model.Name, null, new {@class = "text-danger"})
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <label for="passwordInput" class="form-label mt-2" >Enter Password</label>
+            <input asp-for="Password" type="password" id="passwordInput" class="form-control" placeholder="Password"/>
+            @Html.ValidationMessageFor(model=>model.Password, null, new {@class = "text-danger"})
+        </div>
+        <div class="col-12 col-md-6">
+            <label for="confirmPasswordInput" class="form-label mt-2">Confirm Password</label>
+            <input type="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
+            <span class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <label asp-for="Age" class="form-label mt-2" ></label>
+            <input asp-for="Age" id="ageInput" type="number" class="form-control" min=13 max=200 value="13"/>
+            @Html.ValidationMessageFor(model=>model.Age, null, new {@class = "text-danger"})
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <label asp-for="Gender" class="form-label mt-2"></label>
+            <select asp-for="Gender" class="form-select">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+            @Html.ValidationMessageFor(model=>model.Gender, null, new {@class = "text-danger"})
+        </div>
     </div>
     <div class="form-group">
-        <label for="usernameInput" >Enter Username</label>
-        <input asp-for="Name" type="text" id="usernameInput" class="form-control" placeholder="Username"/>
-        @Html.ValidationMessageFor(model=>model.Name)
+        <button type="submit" class="btn btn-primary mt-2">Register</button>
     </div>
-    <div class="form-group">
-        <label>Enter Password</label>
-        <input asp-for="Password" type="password" class="form-control" placeholder="Password"/>
-        @Html.ValidationMessageFor(model=>model.Password)
-    </div>
-        
-        <label for="confirmPasswordInput">Confirm Password</label>
-        <input type="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
-        
-    <div class="form-group">
-        <label asp-for="Age"></label>
-        <input asp-for="Age" id="ageInput" type="number" />
-        @Html.ValidationMessageFor(model=>model.Age)
-    </div>
-    <div class="form-group">
-        <label asp-for="Gender"></label>
-        <select asp-for="Gender">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-        @Html.ValidationMessageFor(model=>model.Gender)
-    </div>
-    <button type="submit" class="btn btn-primary">Register</button>
 </form>
-<small>Already have an account? - <a asp-area="" asp-controller="Home" asp-action="LogIn">Log in</a> instead</small>
+<small class="mt-4">Already have an account? - <a asp-area="" asp-controller="Home" asp-action="LogIn">Log in</a> instead</small>

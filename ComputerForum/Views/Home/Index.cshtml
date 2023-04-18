@@ -3,12 +3,15 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-<div>
-    <h1>Forum Categories</h1>
+   <h2 >Forum Categories</h2>
+   <article class="d-lg-flex">
+    <section class="col-md-8">
+    @if (Model.Count == 0)
+    {
+        <div>There are no categories</div>
+    }
+    else
+    {
     <table class="table table-dark table-hover">
         <thead>
             <th>Name</th>
@@ -23,6 +26,15 @@
                 <td>@category.CreationDate.ToShortDateString()</td>
             </tr>
         }
+
         <!-- Job for you, make it look good and fancy mkay? -->
     </table>
-</div>
+    }
+    </section>
+    @if(User.Identity.Name != null)
+    {
+        <aside class="col-md-4 ">
+            <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary">Add a Category</button></a>
+        </aside>
+    }
+    </article>
