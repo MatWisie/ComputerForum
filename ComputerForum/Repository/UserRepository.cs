@@ -2,7 +2,7 @@
 using ComputerForum.Interfaces;
 using ComputerForum.Models;
 using ComputerForum.ViewModels;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerForum.Repository
 {
@@ -25,6 +25,14 @@ namespace ComputerForum.Repository
         public User? GetUserById(int userId)
         {
             return _context.Users.FirstOrDefault(e => e.Id == userId);
+        }
+        public User? GetUserByEmail(string email)
+        {
+            return _context.Users.FirstOrDefault(e => e.Email == email);
+        }
+        public User? GetUserByIdWithInclude(int userId)
+        {
+            return _context.Users.Include(e => e.Topics).FirstOrDefault(e => e.Id == userId);
         }
         public bool CheckIfUserExists(UserRegisterVM userVM)
         {
