@@ -1,0 +1,12 @@
+﻿@model ComputerForum.Models.User
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>UserDetails</h1>
+<div>
+    @Model.Name
+    @Model.CreationDate
+Recent Activity @Model.Comments
+    @Model.ClickedReputations
+</div>
