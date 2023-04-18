@@ -34,6 +34,7 @@ namespace ComputerForum.Models
         [InverseProperty("ReportCreator")]
         public ICollection<Report> ReportCreators { get; set; }
         public ICollection<ClickedReputation> ClickedReputations { get; set; }
+        public ICollection<PasswordResetToken> PasswordResetTokens { get; set; }
 
     }
 }

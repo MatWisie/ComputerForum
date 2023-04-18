@@ -14,7 +14,7 @@ namespace ComputerForum.Service
             _userRepository = userRepository;
             _mailService = mailService;
         }
-
+        
         public UserLoginVMResponse? LoginUser(UserLoginVM userVM)
         {
             var user = _userRepository.GetUser(userVM);
@@ -86,6 +86,10 @@ namespace ComputerForum.Service
         {
             return _userRepository.GetUserById(userId);
         }
+        public User? GetUserByIdWithInclude(int userId)
+        {
+            return _userRepository.GetUserByIdWithInclude(userId);
+        }
         public void AddReputation(int userId, int number)
         {
             var user = _userRepository.GetUserById(userId);
@@ -94,6 +98,12 @@ namespace ComputerForum.Service
         }
         public void UpdateUser(User user)
         {
+            _userRepository.UpdateUser(user);
+        }
+        public void ChangePassword(User user)
+        {
+            string tmpPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = tmpPassword;
             _userRepository.UpdateUser(user);
         }
 
