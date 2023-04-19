@@ -1,5 +1,6 @@
 ﻿using ComputerForum.Interfaces;
 using ComputerForum.Models;
+using ComputerForum.ViewModels;
 
 namespace ComputerForum.Service
 {
@@ -19,15 +20,24 @@ namespace ComputerForum.Service
         {
             return _categoryRepository.GetCategoryById(categoryId);
         }
+        public Category? GetCategoryByName(string categoryName)
+        {
+            return _categoryRepository.GetCategoryByName(categoryName);
+        }
 
         public void DeleteCategory(Category category)
         {
             _categoryRepository.DeleteCategory(category);
         }
 
-        public void AddCategory(Category category)
+        public void AddCategory(CategoryVM category)
         {
-            _categoryRepository.AddCategory(category);
+            Category tmp = new Category
+            {
+                Name = category.Name,
+                CreatorId = category.CreatorId
+            };
+            _categoryRepository.AddCategory(tmp);
         }
         public void EditCategory(Category category)
         {

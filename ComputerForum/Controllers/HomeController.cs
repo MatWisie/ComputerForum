@@ -1,5 +1,6 @@
 ﻿using ComputerForum.Interfaces;
 using ComputerForum.Models;
+using ComputerForum.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,13 +14,15 @@ namespace ComputerForum.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ITopicService _topicService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICategoryVerification _categoryVerification;
 
-        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor)
+        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor, ICategoryVerification categoryVerification)
         {
             _logger = logger;
             _categoryService = categoryService;
             _topicService = topicService;
             _httpContextAccessor = httpContextAccessor;
+            _categoryVerification = categoryVerification;
         }
 
         public IActionResult Index()
@@ -38,7 +41,7 @@ namespace ComputerForum.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult AddCategory(Category category)
+        public IActionResult AddCategory(CategoryVM category)
         {
             if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
             {
@@ -46,15 +49,20 @@ namespace ComputerForum.Controllers
             }
             if (ModelState.IsValid)
             {
-                _categoryService.AddCategory(category);
-                return RedirectToAction("Index");
+                if(_categoryVerification.CheckUniqueName(category.Name))
+                {
+                    _categoryService.AddCategory(category);
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("Not_unique", "The name of the category is not unique");
+                return View(category);
             }
             return View(category);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult DeleteCategory(int categoryId)
+        public IActionResult DeleteCategory(int categoryId) //this gonna be done with ajax
         {
             var category = _categoryService.GetCategoryById(categoryId);
             if (category == null)
@@ -67,7 +75,7 @@ namespace ComputerForum.Controllers
             }
 
             _categoryService.DeleteCategory(category);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         [Authorize]
@@ -83,7 +91,7 @@ namespace ComputerForum.Controllers
                 return Unauthorized();
             }
 
-            return View(category);
+            return View(category); //here hide properties like Id etc. because we dont change those 
         }
 
         [HttpPost]
@@ -96,8 +104,13 @@ namespace ComputerForum.Controllers
             }
             if (ModelState.IsValid)
             {
-                _categoryService.EditCategory(category);
-                return RedirectToAction("Index");
+                if (_categoryVerification.CheckUniqueName(category.Name))
+                {
+                    _categoryService.EditCategory(category);
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("Not_unique", "The name of the category is not unique");
+                return View(category);
             }
             return View(category);
         }
@@ -117,7 +130,7 @@ namespace ComputerForum.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult AddTopic(Topic topic)
+        public IActionResult AddTopic(TopicVM topic)
         {
             if (ModelState.IsValid)
             {

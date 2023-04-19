@@ -32,13 +32,26 @@ namespace ComputerForum.Controllers
                 if (user != null)
                 {
                     int? userId = _userService.GetUserId(user.Name);
-                    
-                    var claims = new List<Claim>
+                    List<Claim> claims;
+                    if(user.Admin != true)
+                    {
+                        claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
                                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                                 new Claim(ClaimTypes.Role, "User"),
                             };
+                    }
+                    else
+                    {
+                        claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, user.Name),
+                                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                                new Claim(ClaimTypes.Role, "Admin"),
+                            };
+                    }
+
                     var claimsIdentity = new ClaimsIdentity(
                         claims, CookieAuthenticationDefaults.AuthenticationScheme);
 

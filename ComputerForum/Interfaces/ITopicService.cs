@@ -10,6 +10,6 @@ namespace ComputerForum.Interfaces
         Topic? GetTopic(int id);
         void EditTopic(TopicVM topic);
         void DeleteTopic(Topic topic);
-        void AddTopic(Topic topic);
+        void AddTopic(TopicVM topic);
     }
 }

@@ -27,6 +27,10 @@ namespace ComputerForum.Repository
         {
             return _context.Categories.FirstOrDefault(e => e.Id == categoryId);
         }
+        public Category? GetCategoryByName(string categoryName)
+        {
+            return _context.Categories.FirstOrDefault(e => e.Name == categoryName);
+        }
         public void EditCategory(Category category)
         {
             _context.Categories.Update(category);
