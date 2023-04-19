@@ -80,12 +80,7 @@ namespace ComputerForum.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool result = _userService.AddUser(userVM);
-                if (result == true)
-                {
-                    return RedirectToAction("Login");
-                }
-                ModelState.AddModelError("", "User with that name already exists");
+                _userService.AddUser(userVM);
                 return RedirectToAction("Login");
             }
             return View(userVM);
