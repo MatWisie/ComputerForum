@@ -14,15 +14,13 @@ namespace ComputerForum.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ITopicService _topicService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ICategoryVerification _categoryVerification;
 
-        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor, ICategoryVerification categoryVerification)
+        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _categoryService = categoryService;
             _topicService = topicService;
             _httpContextAccessor = httpContextAccessor;
-            _categoryVerification = categoryVerification;
         }
 
         public IActionResult Index()
@@ -49,13 +47,8 @@ namespace ComputerForum.Controllers
             }
             if (ModelState.IsValid)
             {
-                if(_categoryVerification.CheckUniqueName(category.Name))
-                {
-                    _categoryService.AddCategory(category);
-                    return RedirectToAction("Index");
-                }
-                ModelState.AddModelError("Not_unique", "The name of the category is not unique");
-                return View(category);
+                _categoryService.AddCategory(category);
+                return RedirectToAction("Index");
             }
             return View(category);
         }
@@ -104,13 +97,8 @@ namespace ComputerForum.Controllers
             }
             if (ModelState.IsValid)
             {
-                if (_categoryVerification.CheckUniqueName(category.Name))
-                {
-                    _categoryService.EditCategory(category);
-                    return RedirectToAction("Index");
-                }
-                ModelState.AddModelError("Not_unique", "The name of the category is not unique");
-                return View(category);
+                _categoryService.EditCategory(category);
+                return RedirectToAction("Index");
             }
             return View(category);
         }
@@ -162,7 +150,6 @@ namespace ComputerForum.Controllers
         {
             return View();
         }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
