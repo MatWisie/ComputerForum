@@ -34,7 +34,9 @@
     @if(User.Identity.Name != null)
     {
         <aside class="col-md-4 ">
-            <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary">Add a Category</button></a>
+                <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary">Add a Category</button></a>
+                <a asp-controller="Home" asp-action="EditCategory"><button class="btn btn-primary">Add a Category</button></a>
+                <a asp-controller="Home" asp-action="DeleteCategory"><button class="btn btn-primary">Add a Category</button></a>
         </aside>
     }
     </article>
