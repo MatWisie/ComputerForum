@@ -44,7 +44,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _commentService.AddComment(comment);
-                return RedirectToAction("Index", comment.TopicId);
+                return RedirectToAction("Index", new { id = comment.TopicId });
             }
             return View(comment);
         }
@@ -67,7 +67,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditTopic(TopicVM topic)
+        public IActionResult EditTopic(Topic topic)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
@@ -77,7 +77,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _topicService.EditTopic(topic);
-                return RedirectToAction("Index", "Home", "");
+                return RedirectToAction("Index", new {id = topic.Id});
             }
             return View(topic);
         }
@@ -101,7 +101,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditComment(CommentVM comment)
+        public IActionResult EditComment(Comment comment)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
@@ -111,7 +111,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _commentService.EditComment(comment);
-                return RedirectToAction("Index", "Home", "");
+                return RedirectToAction("Index", new {id = comment.TopicId});
             }
             return View(comment);
         }
@@ -132,7 +132,7 @@ namespace ComputerForum.Controllers
             }
 
             _commentService.DeleteComment(comment);
-            return RedirectToAction("Index", "Home", "");
+            return RedirectToAction("Index", new {id = comment.TopicId});
         }
 
         [Authorize]
@@ -151,7 +151,7 @@ namespace ComputerForum.Controllers
             }
 
             _topicService.DeleteTopic(topic);
-            return RedirectToAction("Index", "Home", "");
+            return RedirectToAction("Topic", "Home", new {id = topic.CategoryId});
         }
 
         [Authorize]

@@ -8,7 +8,7 @@ namespace ComputerForum.Interfaces
         IList<Topic> GetTopics(int categoryId);
         Topic? GetTopicWithComments(int id);
         Topic? GetTopic(int id);
-        void EditTopic(TopicVM topic);
+        void EditTopic(Topic topic);
         void DeleteTopic(Topic topic);
         void AddTopic(TopicVM topic);
     }

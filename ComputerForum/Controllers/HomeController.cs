@@ -123,19 +123,10 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _topicService.AddTopic(topic);
-                return RedirectToAction("Topic", topic.CategoryId);
+                return RedirectToAction("Topic", new {id = topic.CategoryId });
             }
             return View(topic);
             
-        }
-
-        public IActionResult TopicRedirect(int id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            return RedirectToAction("Index", "Topic", id);
         }
 
         public IActionResult Privacy()
