@@ -18,11 +18,15 @@
         @Html.ValidationMessageFor(model => model.Password, null, new {@class = "text-danger"})
         </div>
     </div>
+    <span class="text-danger">@Html.ValidationSummary()</span>
     <button type="submit" class="submit-btn btn btn-primary mt-2">Log In</button>
 </form>
  <small>Don't have an account? - <a asp-area="" asp-controller="Home" asp-action="Register">Register</a> instead</small>
+ <!--
  <script>
      $("#login-form").submit(function(e) {
     e.preventDefault();
 });
+
  </script>
+ -->

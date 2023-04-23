@@ -14,5 +14,6 @@ namespace ComputerForum.Interfaces
         public bool CheckIfUserExists(UserRegisterVM userVM);
         void UpdateUser(User user);
         User? GetUserByName(string name);
+        public int CountUsers();
     }
 }

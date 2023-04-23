@@ -10,5 +10,6 @@ namespace ComputerForum.Interfaces
         IEnumerable<Category> GetCategories();
         Category? GetCategoryById(int categoryId);
         Category? GetCategoryByName(string categoryName);
+        int CountCategories();
     }
 }

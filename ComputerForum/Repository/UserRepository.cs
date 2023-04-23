@@ -42,6 +42,12 @@ namespace ComputerForum.Repository
         {
             return _context.Users.Any(e => e.Name == userVM.Name);
         }
+
+        public int CountUsers()
+        {
+            return _context.Users.Count();
+        }
+
         public void AddUser(User user)
         {
             _context.Users.Add(user);

@@ -41,5 +41,9 @@ namespace ComputerForum.Repository
             _context.Categories.Remove(category);
             _context.SaveChanges();
         }
+        public int CountCategories()
+        {
+            return _context.Users.Count();
+        }
     }
 }

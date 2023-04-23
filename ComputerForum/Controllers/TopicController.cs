@@ -16,7 +16,8 @@ namespace ComputerForum.Controllers
         private readonly IUserService _userService;
         private readonly IReportService _reportService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService)
+        private readonly IRoleValidation _roleValidation;
+        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService, IRoleValidation roleValidation)
         {
             _topicService = topicService;
             _commentService = commentService;
@@ -24,6 +25,7 @@ namespace ComputerForum.Controllers
             _userService = userService;
             _reputationService = reputationService;
             _reportService = reportService;
+            _roleValidation = roleValidation;
         }
 
         public IActionResult Index(int id)
@@ -126,7 +128,7 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
+            if (_roleValidation.CheckIfAdmin() != true || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
                 return Unauthorized();
             }
@@ -145,7 +147,7 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
+            if (_roleValidation.CheckIfAdmin() != true || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
                 return Unauthorized();
             }

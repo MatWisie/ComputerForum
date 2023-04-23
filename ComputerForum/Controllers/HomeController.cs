@@ -14,13 +14,15 @@ namespace ComputerForum.Controllers
         private readonly ICategoryService _categoryService;
         private readonly ITopicService _topicService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRoleValidation _roleValidation;
 
-        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor)
+        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, ITopicService topicService, IHttpContextAccessor httpContextAccessor, IRoleValidation roleValidation)
         {
             _logger = logger;
             _categoryService = categoryService;
             _topicService = topicService;
             _httpContextAccessor = httpContextAccessor;
+            _roleValidation = roleValidation;
         }
 
         public IActionResult Index()
@@ -31,7 +33,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult AddCategory()
         {
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }
@@ -41,7 +43,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult AddCategory(CategoryVM category)
         {
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }
@@ -62,7 +64,7 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }
@@ -79,7 +81,7 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
+            if (_roleValidation.CheckIfAdmin() != true && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
             {
                 return Unauthorized();
             }
