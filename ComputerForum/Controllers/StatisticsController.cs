@@ -15,6 +15,7 @@ namespace ComputerForum.Controllers
             _cache = cache;
         }
 
+        [HttpGet]
         public IActionResult BlogStatistics()
         {
             
