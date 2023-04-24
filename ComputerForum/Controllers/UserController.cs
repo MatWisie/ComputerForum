@@ -32,13 +32,26 @@ namespace ComputerForum.Controllers
                 if (user != null)
                 {
                     int? userId = _userService.GetUserId(user.Name);
-                    
-                    var claims = new List<Claim>
+                    List<Claim> claims;
+                    if(user.Admin != true)
+                    {
+                        claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
                                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                                 new Claim(ClaimTypes.Role, "User"),
                             };
+                    }
+                    else
+                    {
+                        claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.Name, user.Name),
+                                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                                new Claim(ClaimTypes.Role, "Admin"),
+                            };
+                    }
+
                     var claimsIdentity = new ClaimsIdentity(
                         claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -67,12 +80,7 @@ namespace ComputerForum.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool result = _userService.AddUser(userVM);
-                if (result == true)
-                {
-                    return RedirectToAction("Login");
-                }
-                ModelState.AddModelError("", "User with that name already exists");
+                _userService.AddUser(userVM);
                 return RedirectToAction("Login");
             }
             return View(userVM);

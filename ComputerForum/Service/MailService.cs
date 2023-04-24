@@ -12,7 +12,7 @@ namespace ComputerForum.Service
             {
                 var sender = new MailAddress("ourEmail@gmail.com", "Computer forum");
                 var receiver = new MailAddress(receiverEmail);
-                var password = "Email password";
+                var password = System.Configuration.ConfigurationManager.AppSettings["EmailPass"];
                 var smtp = new SmtpClient
                 {
                     Host = "smtp.gmail.com",

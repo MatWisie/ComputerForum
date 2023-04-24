@@ -36,26 +36,25 @@ namespace ComputerForum.Service
             }
             return null;
         }
-        public void EditTopic(TopicVM topic)
+        public void EditTopic(Topic topic)
         {
-            Topic tmp = new Topic
-            {
-                Id = topic.Id,
-                Title = topic.Title,
-                Description = topic.Description,
-                CategoryId = topic.CategoryId,
-                CreatorId = topic.CreatorId
-            };
-            _topicRepository.EditTopic(tmp);
+            _topicRepository.EditTopic(topic);
         }
         public void DeleteTopic(Topic topic)
         {
             _topicRepository.DeleteTopic(topic);
         }
 
-        public void AddTopic(Topic topic)
+        public void AddTopic(TopicVM topic)
         {
-            _topicRepository.AddTopic(topic);
+            Topic tmp = new Topic
+            {
+                Title = topic.Title,
+                Description = topic.Description,
+                CreatorId = topic.CreatorId,
+                CategoryId = topic.CategoryId
+            };
+            _topicRepository.AddTopic(tmp);
         }
     }
 }

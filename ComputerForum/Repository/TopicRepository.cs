@@ -46,6 +46,10 @@ namespace ComputerForum.Repository
             _context.Topics.Add(topic);
             _context.SaveChanges();
         }
+        public int CountTopics()
+        {
+            return _context.Topics.Count();
+        }
 
     }
 }

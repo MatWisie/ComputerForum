@@ -44,11 +44,8 @@ namespace ComputerForum.Service
             return null;
         }
 
-        public bool AddUser(UserRegisterVM userVM)
+        public void AddUser(UserRegisterVM userVM)
         {
-            bool userExists = _userRepository.CheckIfUserExists(userVM);
-            if (!userExists)
-            {
                 userVM.Password = BCrypt.Net.BCrypt.HashPassword(userVM.Password);
                 User tmpUserVM = new User()
                 {
@@ -69,14 +66,6 @@ namespace ComputerForum.Service
                     $"From now on, you can ask questions that bother you and help the community by answering other people's questions and participate in the life of our site \n" +
                     $"Thank you, Computer Forum team"
                     );
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
         }
         public int? GetUserId(string userName)
         {
@@ -90,6 +79,17 @@ namespace ComputerForum.Service
         {
             return _userRepository.GetUserByIdWithInclude(userId);
         }
+
+        public User? GetUserByName(string userName)
+        {
+            return _userRepository.GetUserByName(userName);
+        }
+
+        public User? GetUserByEmail(string userEmail)
+        {
+            return _userRepository.GetUserByEmail(userEmail);
+        }
+
         public void AddReputation(int userId, int number)
         {
             var user = _userRepository.GetUserById(userId);

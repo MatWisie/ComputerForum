@@ -13,5 +13,7 @@ namespace ComputerForum.Interfaces
         User? GetUserByIdWithInclude(int userId);
         public bool CheckIfUserExists(UserRegisterVM userVM);
         void UpdateUser(User user);
+        User? GetUserByName(string name);
+        public int CountUsers();
     }
 }

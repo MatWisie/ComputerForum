@@ -9,17 +9,18 @@ namespace ComputerForum.Controllers
     public class ReportController : Controller
     {
         private IReportService _reportService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public ReportController(IReportService reportService, IHttpContextAccessor httpContextAccessor)
+        //private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRoleValidation _roleValidation;
+        public ReportController(IReportService reportService, IRoleValidation roleValidation)
         {
             _reportService = reportService;
-            _httpContextAccessor = httpContextAccessor;
+            _roleValidation = roleValidation;
         }
 
         [Authorize]
         public IActionResult Index()
         {
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }
@@ -31,7 +32,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult Details(int reportId)
         {
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }
@@ -48,7 +49,7 @@ namespace ComputerForum.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int reportId)
         {
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }
@@ -63,7 +64,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult AcceptReport(int reportId)
         {
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin")
+            if (_roleValidation.CheckIfAdmin() != true)
             {
                 return Unauthorized();
             }

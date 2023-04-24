@@ -32,16 +32,9 @@ namespace ComputerForum.Service
             return _commentRepository.GetComment(commentId);
         }
 
-        public void EditComment(CommentVM comment)
+        public void EditComment(Comment comment)
         {
-            Comment tmp = new Comment
-            {
-                Content = comment.Content,
-                QuotedStatement = comment.QuotedStatement,
-                CreatorId = comment.CreatorId,
-                TopicId = comment.TopicId
-            };
-            _commentRepository.EditComment(tmp);
+            _commentRepository.EditComment(comment);
         }
         public void DeleteComment(Comment comment)
         {

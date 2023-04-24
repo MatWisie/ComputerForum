@@ -10,5 +10,6 @@ namespace ComputerForum.Interfaces
         void EditTopic(Topic topic);
         void DeleteTopic(Topic topic);
         void AddTopic(Topic topic);
+        int CountTopics();
     }
 }
