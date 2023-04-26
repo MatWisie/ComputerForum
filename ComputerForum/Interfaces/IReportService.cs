@@ -5,7 +5,7 @@ namespace ComputerForum.Interfaces
     public interface IReportService
     {
         void AddReport(Report report);
-        void DeleteReport(int reportId);
+        void DeleteReport(Report report);
         Report? GetReport(int reportId);
         IList<Report> GetReports();
         void AcceptReport(int reportId);

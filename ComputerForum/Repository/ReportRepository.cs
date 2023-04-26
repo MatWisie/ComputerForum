@@ -27,9 +27,8 @@ namespace ComputerForum.Repository
             _context.Reports.Add(report);
             _context.SaveChanges();
         }
-        public void DeleteReport(int reportId)
+        public void DeleteReport(Report report)
         {
-            var report = GetReport(reportId);
             _context.Reports.Remove(report);
             _context.SaveChanges();
         }

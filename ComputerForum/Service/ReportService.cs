@@ -27,10 +27,9 @@ namespace ComputerForum.Service
         {
             _reportRepository.AddReport(report);
         }
-        public void DeleteReport(int reportId)
+        public void DeleteReport(Report report)
         {
-            if(_reportRepository.GetReport(reportId) != null)
-                _reportRepository.DeleteReport(reportId);
+            _reportRepository.DeleteReport(report);
         }
 
         public void AcceptReport(int reportId)

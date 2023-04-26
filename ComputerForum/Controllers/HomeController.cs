@@ -28,6 +28,7 @@ namespace ComputerForum.Controllers
         public IActionResult Index()
         {
             var categories = _categoryService.GetCategories();
+            _logger.LogInformation("Rendered Index");
             return View(categories);
         }
         [Authorize]
@@ -50,6 +51,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _categoryService.AddCategory(category);
+                _logger.LogInformation("Category added");
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -68,7 +70,7 @@ namespace ComputerForum.Controllers
             {
                 return Unauthorized();
             }
-
+            _logger.LogInformation("Category delted");
             _categoryService.DeleteCategory(category);
             return Ok();
         }
@@ -100,6 +102,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _categoryService.EditCategory(category);
+                _logger.LogInformation("Category edited");
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -109,6 +112,7 @@ namespace ComputerForum.Controllers
         public IActionResult Topic(int id)
         {
             var topics = _topicService.GetTopics(id);
+            _logger.LogInformation("Entered Topic");
             return View(topics);
         }
 

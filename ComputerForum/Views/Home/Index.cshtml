@@ -5,7 +5,9 @@
 
    <h2 >Forum Categories</h2>
    <article class="d-lg-flex">
-    <section class="col-md-8">
+    <div class="container">
+    <div class="row">
+    <div class="col-md-10">
     @if (Model.Count == 0)
     {
         <div>There are no categories</div>
@@ -30,7 +32,14 @@
         <!-- Job for you, make it look good and fancy mkay? -->
     </table>
     }
-    </section>
+    </div>
+
+    <div class="col-md border" id="StatisticsZone" style="background-color:#20374c">
+
+    </div>
+
+    </div>
+    </div>
     @if(User.Identity.Name != null)
     {
         <aside class="col-md-4 ">
@@ -38,3 +47,10 @@
         </aside>
     }
     </article>
+
+    @section Scripts{
+        <script>
+            $('#StatisticsZone').load("/Statistics/BlogStatistics")
+        </script>
+    }
+    
