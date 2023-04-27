@@ -57,11 +57,11 @@ namespace ComputerForum.Controllers
             return View(category);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
-        public IActionResult DeleteCategory(int categoryId) //this gonna be done with ajax
+        public IActionResult DeleteCategory(int id) //this gonna be done with ajax
         {
-            var category = _categoryService.GetCategoryById(categoryId);
+            var category = _categoryService.GetCategoryById(id);
             if (category == null)
             {
                 return NotFound();
@@ -72,7 +72,7 @@ namespace ComputerForum.Controllers
             }
             _logger.LogInformation("Category delted");
             _categoryService.DeleteCategory(category);
-            return Ok();
+            return new JsonResult(Ok());
         }
 
         [Authorize]
@@ -88,12 +88,20 @@ namespace ComputerForum.Controllers
                 return Unauthorized();
             }
 
-            return View(category); //here hide properties like Id etc. because we dont change those 
+            CategoryEditVM tmp = new CategoryEditVM()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                CreationDate = category.CreationDate,
+                CreatorId = category.CreatorId,
+            };
+
+            return View(tmp); //here hide properties like Id etc. because we dont change those 
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult EditCategory(Category category)
+        public IActionResult EditCategory(CategoryEditVM category)
         {
             if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
             {
@@ -101,7 +109,14 @@ namespace ComputerForum.Controllers
             }
             if (ModelState.IsValid)
             {
-                _categoryService.EditCategory(category);
+                Category tmp = new Category()
+                {
+                    Id = category.Id,
+                    CreationDate = category.CreationDate,
+                    CreatorId = category.CreatorId,
+                    Name = category.Name
+                };
+                _categoryService.EditCategory(tmp);
                 _logger.LogInformation("Category edited");
                 return RedirectToAction("Index");
             }
