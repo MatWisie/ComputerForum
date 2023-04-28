@@ -26,7 +26,8 @@ namespace ComputerForum.Service
                     {
                         Name = user.Name,
                         Password = user.Password,
-                        Admin = true
+                        Admin = true,
+                        Active = user.Active
                     };
                     return tmpUserVM;
                 }
@@ -36,7 +37,8 @@ namespace ComputerForum.Service
                     {
                         Name = user.Name,
                         Password = user.Password,
-                        Admin = false
+                        Admin = false,
+                        Active = user.Active
                     };
                     return tmpUserVM;
                 }
