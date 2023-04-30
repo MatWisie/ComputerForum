@@ -10,5 +10,7 @@ namespace ComputerForum.ViewModels
         public string Password { get; set; }
         [Required]
         public bool Admin { get; set; } = false;
+        [Required]
+        public bool Active { get; set; }
     }
 }

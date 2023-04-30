@@ -9,12 +9,13 @@ namespace ComputerForum.Controllers
     public class ReportController : Controller
     {
         private IReportService _reportService;
-        //private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRoleValidation _roleValidation;
-        public ReportController(IReportService reportService, IRoleValidation roleValidation)
+        public ReportController(IReportService reportService, IRoleValidation roleValidation, IHttpContextAccessor httpContextAccessor)
         {
             _reportService = reportService;
             _roleValidation = roleValidation;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [Authorize]
@@ -57,7 +58,12 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            _reportService.DeleteReport(reportId);
+            var report = _reportService.GetReport(reportId);
+            if(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == report.ReportedUserId)
+            {
+                return Unauthorized();
+            }
+            _reportService.DeleteReport(report);
             return RedirectToAction("Index");
         }
 
@@ -71,6 +77,11 @@ namespace ComputerForum.Controllers
             if (reportId == 0 || reportId == null)
             {
                 return NotFound();
+            }
+            var report = _reportService.GetReport(reportId);
+            if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == report.ReportedUserId)
+            {
+                return Unauthorized();
             }
             _reportService.AcceptReport(reportId);
             return RedirectToAction("Index");
