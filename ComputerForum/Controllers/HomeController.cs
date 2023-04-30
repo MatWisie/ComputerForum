@@ -134,7 +134,8 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult AddTopic(int id)
         {
-            return View(id);
+            TopicVM tmp = new TopicVM();
+            return View(tmp);
         }
 
         [HttpPost]
@@ -144,6 +145,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _topicService.AddTopic(topic);
+                _logger.LogInformation("Created new Topic");
                 return RedirectToAction("Topic", new {id = topic.CategoryId });
             }
             return View(topic);
