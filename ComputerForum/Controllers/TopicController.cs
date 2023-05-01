@@ -39,6 +39,21 @@ namespace ComputerForum.Controllers
         }
 
         [Authorize]
+        public IActionResult CreateComment(int id, int? quotedId)
+        {
+            
+           
+            CommentCreateVM tmp = new CommentCreateVM();
+            tmp.TopicId = id;
+            if(quotedId != null)
+            {
+                var quotedComment = _commentService.GetComment((int)quotedId);
+                tmp.QuotedStatement = quotedComment.Content;
+            }
+            return PartialView(tmp);
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateComment(CommentCreateVM comment)
@@ -48,7 +63,7 @@ namespace ComputerForum.Controllers
                 _commentService.AddComment(comment);
                 return RedirectToAction("Index", new { id = comment.TopicId });
             }
-            return View(comment);
+            return PartialView(comment);
         }
         [Authorize]
         public IActionResult EditTopic(int topicId)

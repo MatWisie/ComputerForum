@@ -20,9 +20,9 @@ namespace ComputerForum.Service
             Comment tmp = new Comment()
             {
                 Content = comment.Content,
-                CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value),
+                CreatorId = comment.CreatorId,
                 QuotedStatement = comment.QuotedStatement,
-                TopicId = comment.TopicId,
+                TopicId = comment.TopicId
             };
             _commentRepository.AddComment(tmp);
         }
