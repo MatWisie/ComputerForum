@@ -41,8 +41,6 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult CreateComment(int id, int? quotedId)
         {
-            
-           
             CommentCreateVM tmp = new CommentCreateVM();
             tmp.TopicId = id;
             if(quotedId != null)

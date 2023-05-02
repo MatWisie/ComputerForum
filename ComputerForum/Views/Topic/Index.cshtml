@@ -5,19 +5,49 @@
     ViewData["Title"] = "Topic";
 }
 
-<div>
-    <table class="table table-dark">
-        <tr>
-            <td>@Model.Title</td><td>@Model.User.Name</td>
-        </tr>
-        <tr>
-            <td class="CommentContent">@Model.Description</td><td>@Model.CreationDate.ToShortDateString()</td>
-        </tr>
-        <tr>
-            <td><button class="btn btn-primary" onclick="Reply()">Reply</button></td>
-        </tr>
-    </table>
+<style>
+    .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.row > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+</style>
+
+<div class="container-fluid">
+        <div class="row border" style="background-color:#20374c">
+            <div class="col-md-2">
+                <div class="row border">
+                    @Model.User.Name <br/> @Model.User.Reputation
+                </div>
+                <div class="row border">
+                    Date: @Model.CreationDate.ToShortDateString()
+                </div>
+                <div class="row border">
+                    Strzalki góra/dół
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="row border">
+                    @Model.Title
+                </div>
+                <div class="row border">
+                    @Model.Description
+                </div>
+                <div class="row flex-fill d-flex">
+                    <div class="col">
+                    <button class="btn btn-primary btn-sm" onclick="Reply()">Reply</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 </div>
+
+
 <hr/>
 <div class="container">
     @foreach(var comment in Model.Comments)
@@ -25,7 +55,7 @@
         <div class="row border m-2" style="background-color:#20374c">
             <div class="col-md-2">
                 <div class="row border">
-                    @comment.User.Name
+                    @comment.User.Name <br/> @comment.User.Reputation
                 </div>
                 <div class="row border">
                     Date: @comment.CreationDate.ToShortDateString()
@@ -66,7 +96,11 @@
     <script>
         function Reply(commentId) {
             if ($('#AddCommentZone').children().length == 0) {
-                $('#AddCommentZone').load("/Topic/CreateComment/@Model.Id?quotedId="+commentId);
+                $('#AddCommentZone').load("/Topic/CreateComment/@Model.Id?quotedId=" + commentId);
+            }
+            else {
+                $('#AddCommentZone').html("")
+                console.log("CommentZone cleared")
             }
         }
     </script>
