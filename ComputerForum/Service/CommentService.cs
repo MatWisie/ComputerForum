@@ -20,9 +20,9 @@ namespace ComputerForum.Service
             Comment tmp = new Comment()
             {
                 Content = comment.Content,
-                CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value),
+                CreatorId = comment.CreatorId,
                 QuotedStatement = comment.QuotedStatement,
-                TopicId = comment.TopicId,
+                TopicId = comment.TopicId
             };
             _commentRepository.AddComment(tmp);
         }
@@ -32,16 +32,9 @@ namespace ComputerForum.Service
             return _commentRepository.GetComment(commentId);
         }
 
-        public void EditComment(CommentVM comment)
+        public void EditComment(Comment comment)
         {
-            Comment tmp = new Comment
-            {
-                Content = comment.Content,
-                QuotedStatement = comment.QuotedStatement,
-                CreatorId = comment.CreatorId,
-                TopicId = comment.TopicId
-            };
-            _commentRepository.EditComment(tmp);
+            _commentRepository.EditComment(comment);
         }
         public void DeleteComment(Comment comment)
         {

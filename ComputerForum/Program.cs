@@ -1,8 +1,9 @@
+using ComputerForum.Controllers;
 using ComputerForum.Data;
 using ComputerForum.Interfaces;
 using ComputerForum.Repository;
 using ComputerForum.Service;
-using ComputerForum.Verifications;
+using ComputerForum.Validations;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,7 +39,8 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<ICategoryVerification, CategoryVerification>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddScoped<IRoleValidation, RoleValidation>();
 builder.Services.AddHttpContextAccessor();
 
 

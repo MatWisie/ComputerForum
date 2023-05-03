@@ -36,16 +36,9 @@ namespace ComputerForum.Service
             }
             return null;
         }
-        public void EditTopic(TopicVM topic)
+        public void EditTopic(Topic topic)
         {
-            Topic tmp = new Topic
-            {
-                Title = topic.Title,
-                Description = topic.Description,
-                CategoryId = topic.CategoryId,
-                CreatorId = topic.CreatorId
-            };
-            _topicRepository.EditTopic(tmp);
+            _topicRepository.EditTopic(topic);
         }
         public void DeleteTopic(Topic topic)
         {

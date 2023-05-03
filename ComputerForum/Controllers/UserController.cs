@@ -31,40 +31,48 @@ namespace ComputerForum.Controllers
                 var user = _userService.LoginUser(userVM);
                 if (user != null)
                 {
-                    int? userId = _userService.GetUserId(user.Name);
-                    List<Claim> claims;
-                    if(user.Admin != true)
+                    if(user.Active == false)
                     {
-                        claims = new List<Claim>
+                        ModelState.AddModelError("", "User is not active");
+                        return View(userVM);
+                    }
+                    else
+                    {
+                        int? userId = _userService.GetUserId(user.Name);
+                        List<Claim> claims;
+                        if (user.Admin != true)
+                        {
+                            claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
                                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                                 new Claim(ClaimTypes.Role, "User"),
                             };
-                    }
-                    else
-                    {
-                        claims = new List<Claim>
+                        }
+                        else
+                        {
+                            claims = new List<Claim>
                             {
                                 new Claim(ClaimTypes.Name, user.Name),
                                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                                 new Claim(ClaimTypes.Role, "Admin"),
                             };
+                        }
+
+                        var claimsIdentity = new ClaimsIdentity(
+                            claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                        var authProperties = new AuthenticationProperties
+                        {
+                            AllowRefresh = true,
+                        };
+                        await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                        return RedirectToAction("Index", "Home");
                     }
-
-                    var claimsIdentity = new ClaimsIdentity(
-                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    var authProperties = new AuthenticationProperties
-                    {
-                        AllowRefresh = true,
-                    };
-                    await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-                    return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Wrong name or password");
                 return View(userVM);
@@ -80,12 +88,7 @@ namespace ComputerForum.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool result = _userService.AddUser(userVM);
-                if (result == true)
-                {
-                    return RedirectToAction("Login");
-                }
-                ModelState.AddModelError("", "User with that name already exists");
+                _userService.AddUser(userVM);
                 return RedirectToAction("Login");
             }
             return View(userVM);

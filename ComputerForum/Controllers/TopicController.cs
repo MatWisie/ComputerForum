@@ -16,7 +16,8 @@ namespace ComputerForum.Controllers
         private readonly IUserService _userService;
         private readonly IReportService _reportService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService)
+        private readonly IRoleValidation _roleValidation;
+        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService, IRoleValidation roleValidation)
         {
             _topicService = topicService;
             _commentService = commentService;
@@ -24,6 +25,7 @@ namespace ComputerForum.Controllers
             _userService = userService;
             _reputationService = reputationService;
             _reportService = reportService;
+            _roleValidation = roleValidation;
         }
 
         public IActionResult Index(int id)
@@ -37,6 +39,19 @@ namespace ComputerForum.Controllers
         }
 
         [Authorize]
+        public IActionResult CreateComment(int id, int? quotedId)
+        {
+            CommentCreateVM tmp = new CommentCreateVM();
+            tmp.TopicId = id;
+            if(quotedId != null)
+            {
+                var quotedComment = _commentService.GetComment((int)quotedId);
+                tmp.QuotedStatement = quotedComment.Content;
+            }
+            return PartialView(tmp);
+        }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateComment(CommentCreateVM comment)
@@ -44,9 +59,9 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _commentService.AddComment(comment);
-                return RedirectToAction("Index", comment.TopicId);
+                return RedirectToAction("Index", new { id = comment.TopicId });
             }
-            return View(comment);
+            return PartialView(comment);
         }
         [Authorize]
         public IActionResult EditTopic(int topicId)
@@ -67,7 +82,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditTopic(TopicVM topic)
+        public IActionResult EditTopic(Topic topic)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
@@ -77,7 +92,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _topicService.EditTopic(topic);
-                return RedirectToAction("Index", "Home", "");
+                return RedirectToAction("Index", new {id = topic.Id});
             }
             return View(topic);
         }
@@ -101,7 +116,7 @@ namespace ComputerForum.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditComment(CommentVM comment)
+        public IActionResult EditComment(Comment comment)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
@@ -111,7 +126,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid)
             {
                 _commentService.EditComment(comment);
-                return RedirectToAction("Index", "Home", "");
+                return RedirectToAction("Index", new {id = comment.TopicId});
             }
             return View(comment);
         }
@@ -126,13 +141,13 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
+            if (_roleValidation.CheckIfAdmin() != true || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
                 return Unauthorized();
             }
 
             _commentService.DeleteComment(comment);
-            return RedirectToAction("Index", "Home", "");
+            return RedirectToAction("Index", new {id = comment.TopicId});
         }
 
         [Authorize]
@@ -145,13 +160,13 @@ namespace ComputerForum.Controllers
             {
                 return NotFound();
             }
-            if (_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != "Admin" || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
+            if (_roleValidation.CheckIfAdmin() != true || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
                 return Unauthorized();
             }
 
             _topicService.DeleteTopic(topic);
-            return RedirectToAction("Index", "Home", "");
+            return RedirectToAction("Topic", "Home", new {id = topic.CategoryId});
         }
 
         [Authorize]

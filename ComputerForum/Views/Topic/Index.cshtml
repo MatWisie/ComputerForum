@@ -1,33 +1,108 @@
-﻿@model ComputerForum.Models.Topic
+﻿@using System.Security.Claims
+@model ComputerForum.Models.Topic
 
 @{
     ViewData["Title"] = "Topic";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-<div>
-    <h1>Forum topics</h1>
+<style>
+    .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.row > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
 
-    <table class="table table-dark">
-        <tr>
-            <td>@Model.Title</td><td>@Model.User.Name</td>
-        </tr>
-        <tr>
-            <td>@Model.Description</td>
-        </tr>
-        @foreach(var comment in Model.Comments)
-        {
-            <tr>
-                <td>@comment.User.Name</td><td>@comment.CreationDate.ToShortDateString()</td>
-            </tr>
-            <tr>
-                <td>@comment.Content</td>
-            </tr>
-        }
-        <!-- Job for you, make it look good and fancy mkay? -->
-    </table>
+</style>
+
+<div class="container-fluid">
+        <div class="row border" style="background-color:#20374c">
+            <div class="col-md-2">
+                <div class="row border">
+                    @Model.User.Name <br/> @Model.User.Reputation
+                </div>
+                <div class="row border">
+                    Date: @Model.CreationDate.ToShortDateString()
+                </div>
+                <div class="row border">
+                    Strzalki góra/dół
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="row border">
+                    @Model.Title
+                </div>
+                <div class="row border">
+                    @Model.Description
+                </div>
+                <div class="row flex-fill d-flex">
+                    <div class="col">
+                    <button class="btn btn-primary btn-sm" onclick="Reply()">Reply</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 </div>
+
+
+<hr/>
+<div class="container">
+    @foreach(var comment in Model.Comments)
+    {
+        <div class="row border m-2" style="background-color:#20374c">
+            <div class="col-md-2">
+                <div class="row border">
+                    @comment.User.Name <br/> @comment.User.Reputation
+                </div>
+                <div class="row border">
+                    Date: @comment.CreationDate.ToShortDateString()
+                </div>
+                <div class="row border">
+                    Strzalki góra/dół
+                </div>
+            </div>
+            <div class="col-md-10">
+                @if (@comment.QuotedStatement != null)
+                {
+                    <div class="row border">
+                        In response to: "@comment.QuotedStatement"
+                    </div>
+                }
+                else
+                {
+                    <div class="row border">
+                        In response to topic
+                    </div>
+                }
+                <div class="row border">
+                    @comment.Content
+                </div>
+                <div class="row">
+                    <div class="column"><button class="btn btn-primary btn-sm" onclick="Reply(@comment.Id)">Reply</button></div>
+                </div>
+
+            </div>
+        </div>
+    }
+    <div class="row" id="AddCommentZone">
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function Reply(commentId) {
+            if ($('#AddCommentZone').children().length == 0) {
+                $('#AddCommentZone').load("/Topic/CreateComment/@Model.Id?quotedId=" + commentId);
+            }
+            else {
+                $('#AddCommentZone').html("")
+                console.log("CommentZone cleared")
+            }
+        }
+    </script>
+}
 

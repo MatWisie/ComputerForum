@@ -30,6 +30,10 @@ namespace ComputerForum.Repository
         {
             return _context.Users.FirstOrDefault(e => e.Email == email);
         }
+        public User? GetUserByName(string name)
+        {
+            return _context.Users.FirstOrDefault(e => e.Name == name);
+        }
         public User? GetUserByIdWithInclude(int userId)
         {
             return _context.Users.Include(e => e.Topics).FirstOrDefault(e => e.Id == userId);
@@ -38,6 +42,12 @@ namespace ComputerForum.Repository
         {
             return _context.Users.Any(e => e.Name == userVM.Name);
         }
+
+        public int CountUsers()
+        {
+            return _context.Users.Count();
+        }
+
         public void AddUser(User user)
         {
             _context.Users.Add(user);

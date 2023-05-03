@@ -7,7 +7,8 @@ namespace ComputerForum.Interfaces
     {
         void AddComment(CommentCreateVM comment);
         Comment GetComment(int commentId);
-        void EditComment(CommentVM comment);
+        void EditComment(Comment comment);
         void DeleteComment(Comment comment);
+
     }
 }
