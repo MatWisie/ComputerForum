@@ -3,10 +3,18 @@
     ViewData["Title"] = Model.Name;
 }
 
-<h1>UserDetails</h1>
+<h1>Your Profile</h1>
 <div>
-    @Model.Name
-    @Model.CreationDate
-Recent Activity @Model.Comments
-    @Model.ClickedReputations
+    <h2>@Model.Name</h2>
+    <div>
+        <p>@(@Model.Admin == true ? "Admin" : "Member") - @Model.Gender - @Model.Age</p>
+        <span>Joined @Model.CreationDate</span>
+    </div>
+    <div>
+        <ul class="list-group list-group-horizontal">
+            <li class="list-group-item border-end"><h6>Topics</h6> @Model.Topics 0</li>
+            <li class="list-group-item border-end"><h6>Comments</h6> @Model.Comments 0</li>
+            <li class="list-group-item"><h6>Reputation</h6> @Model.Reputation</li>
+        </ul>
+    </div>
 </div>
