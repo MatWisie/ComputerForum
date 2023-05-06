@@ -111,23 +111,36 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult EditComment(int commentId)
         {
+
             if (commentId == null || commentId == 0)
             {
                 return NotFound();
             }
-
             var comment = _commentService.GetComment(commentId);
+            if(comment == null || comment.Content == "Comment was deleted")
+            {
+                return NotFound();
+            }
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
                 return Unauthorized();
             }
 
-            return View(comment);
+            CommentEditVM tmp = new CommentEditVM()
+            {
+                Id = comment.Id,
+                Content = comment.Content,
+                QuotedStatement = comment.QuotedStatement,
+                CreatorId = comment.CreatorId,
+                TopicId = comment.TopicId
+            };
+
+            return View(tmp);
         }
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditComment(Comment comment)
+        public IActionResult EditComment(CommentEditVM comment)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
@@ -136,14 +149,13 @@ namespace ComputerForum.Controllers
 
             if (ModelState.IsValid)
             {
-                _commentService.EditComment(comment);
+                _commentService.EditCommentVM(comment);
                 return RedirectToAction("Index", new {id = comment.TopicId});
             }
             return View(comment);
         }
 
         [Authorize]
-        [ValidateAntiForgeryToken]
         public IActionResult DeleteComment(int commentId)
         {
             var comment = _commentService.GetComment(commentId);
@@ -155,8 +167,8 @@ namespace ComputerForum.Controllers
             {
                 return Unauthorized();
             }
-
-            _commentService.DeleteComment(comment);
+            comment.Content = "Comment was deleted";
+            _commentService.EditComment(comment);
             return RedirectToAction("Index", new {id = comment.TopicId});
         }
 
