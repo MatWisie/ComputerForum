@@ -66,22 +66,25 @@
 
             function DeleteCategory(categoryId, button) 
             {
-                $tr = $(button).closest("tr");
+                if (confirm('Are you sure?')) 
+                {
+                    $tr = $(button).closest("tr");
 
-                $.ajax({
-                    type: "GET",
-                    url: "Home/DeleteCategory/" + categoryId,
-                    dataType: "json",
-                    success: function(result) {
-                        $tr.find('td').fadeOut(400, function() {
-                        $tr.remove()
-                        });
-                        console.log("success hurra")
-                    },
-                    error: function(req, status, error) {
-                        console.log(status)
-                    }
-                })
+                    $.ajax({
+                        type: "GET",
+                        url: "Home/DeleteCategory/" + categoryId,
+                        dataType: "json",
+                        success: function(result) {
+                            $tr.find('td').fadeOut(400, function() {
+                            $tr.remove()
+                            });
+                            console.log("success hurra")
+                        },
+                        error: function(req, status, error) {
+                            console.log(status)
+                        }
+                    })
+                }
             }
         </script>
     }
