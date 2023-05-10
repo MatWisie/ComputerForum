@@ -56,6 +56,7 @@ namespace ComputerForum.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateComment(CommentCreateVM comment)
         {
+            comment.CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             var topic = _topicService.GetTopic(comment.TopicId);
             if (ModelState.IsValid && topic.Active)
             {
@@ -74,6 +75,11 @@ namespace ComputerForum.Controllers
             }
 
             var topic = _topicService.GetTopic(topicId);
+            if(topic == null)
+            {
+                return NotFound();
+            }
+
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
                 return Unauthorized();
@@ -191,8 +197,7 @@ namespace ComputerForum.Controllers
 
         [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ReputationButton(int topicId, bool isPositive)
+        public async Task<IActionResult> ReputationButton(int topicId, bool isPositive)
         {
             var topic = _topicService.GetTopic(topicId);
             if (topic == null)
@@ -200,18 +205,19 @@ namespace ComputerForum.Controllers
                 return NotFound();
             }
 
-            string result = _reputationService.AddToClickedReputations(topic.CreatorId, topicId, isPositive);
+            string result = _reputationService.AddToClickedReputations(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value), topicId, isPositive);
+            User user = _userService.GetUserById(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             if(result == "Added")
             {
-                return Ok("Added reputation");
+                return new JsonResult(user.Reputation);
             }
             if (result == "Deleted")
             {
-                return Ok("Reputation canceled");
+                return new JsonResult(user.Reputation);
             }
             else
             {
-                return BadRequest("Something went wrong");
+                return new JsonResult("Something went wrong");
             }
         }
 

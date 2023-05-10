@@ -43,7 +43,7 @@ namespace ComputerForum.Repository
         }
         public int CountCategories()
         {
-            return _context.Users.Count();
+            return _context.Categories.Count();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace ComputerForum.ViewModels
         [Required]
         public DateTime CreationDate { get; set; } = DateTime.Now;
         [Required]
-        [MaxLength(1000, ErrorMessage = "Max length is 1000 characters")]
+        [MaxLength(500, ErrorMessage = "Max length is 500 characters")]
         public string Content { get; set; }
         public string? QuotedStatement { get; set; }
         [Required]
