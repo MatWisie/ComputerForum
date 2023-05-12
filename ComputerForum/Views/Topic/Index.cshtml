@@ -42,7 +42,7 @@
         <div class="row border" style="background-color:#20374c">
             <div class="col-md-2">
                 <div class="row border text-center">
-                    @Model.User.Name <br/> <span id="userReputation">@Model.User.Reputation</span>
+                    <span>@Model.User.Name</span> <br/> <span id="userReputation">@Model.User.Reputation</span>
                 </div>
                 <div class="row border">
                     <button onclick="ReputationUp(true)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">
@@ -53,7 +53,7 @@
                     </svg></button>
                 </div>
                 <div class="row border text-center">
-                    Date: @Model.CreationDate.ToShortDateString()
+                    <span>Date: @Model.CreationDate.ToShortDateString()</span>
                 </div>
             </div>
             <div class="col-md-10">
@@ -96,14 +96,11 @@
 
         <div class="row border m-2" style="background-color:#20374c">
             <div class="col-md-2">
-                <div class="row border">
-                    @comment.User.Name <br/> @comment.User.Reputation
+                <div class="row border text-center">
+                    <span>@comment.User.Name</span> <br/> <span>@comment.User.Reputation</span>
                 </div>
-                <div class="row border">
-                    Date: @comment.CreationDate.ToShortDateString()
-                </div>
-                <div class="row border">
-                    Strzalki góra/dół
+                <div class="row border text-center">
+                    <span>Date: @comment.CreationDate.ToShortDateString()</span>
                 </div>
             </div>
             <div class="col-md-10">
@@ -172,7 +169,12 @@
                     $("#userReputation").text(result);
                 },
                 error: function(req, status, error) {
-                    alert(status)
+                    if (error == "Unauthorized") {
+                        alert("You have to login first");
+                    }
+                    else {
+                        alert(error);
+                    }
                 }
             })
         }
