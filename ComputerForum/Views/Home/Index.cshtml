@@ -20,12 +20,10 @@
             <th>Name</th>
             <th>Creator</th>
             <th>Date</th>
-            <th></th>
-            <th></th>
         </thead>
         @foreach(var category in Model)
         {
-            <tr onclick="location.href = '@Url.Action("Topic","Home", new {id = @category.Id})'"> <!--Which I HOPE will soon be added-->
+            <tr onclick="location.href = '@Url.Action("Topic","Home", new {id = @category.Id})'">
                 <td>@category.Name</td>
                 <td>@category.User.Name</td>
                 <td>@category.CreationDate.ToShortDateString()</td>
@@ -36,24 +34,18 @@
                 }
             </tr>
         }
-
-        <!-- Job for you, make it look good and fancy mkay? -->
     </table>
     }
     </div>
-
-    <div class="col-md border" id="StatisticsZone" style="background-color:#20374c">
-
-    </div>
-
     </div>
     </div>
-    @if(User.Identity.Name != null && @User.FindFirst(ClaimTypes.Role).Value == "Admin")
-    {
-        <aside class="col-md-4 ">
-            <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary">Add a Category</button></a>
-        </aside>
-    }
+    <aside class="col-md-4 ">
+        @if(User.Identity.Name != null && @User.FindFirst(ClaimTypes.Role).Value == "Admin")
+        {
+            <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary mb-4">Add a Category</button></a>
+        }
+        <div class="col-md border" id="StatisticsZone" style="background-color:#20374c"></div>
+    </aside>
     </article>
 
     @section Scripts{
