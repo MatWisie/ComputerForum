@@ -24,6 +24,14 @@ namespace ComputerForum.Service
                     TopicId = topicId,
                     IsGoodOpinion = isPositive
                 };
+                if (isPositive)
+                {
+                    _userService.AddReputation(userId, +1);
+                }
+                else
+                {
+                    _userService.AddReputation(userId, -1);
+                }
                 _reputationRepository.AddToClickedReputations(tmp);
                 return "Added";
             }

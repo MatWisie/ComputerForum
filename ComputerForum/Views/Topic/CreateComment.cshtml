@@ -1,0 +1,31 @@
+﻿@using System.Security.Claims
+@model ComputerForum.ViewModels.CommentCreateVM
+
+    <div class="col-md-4">
+        <form asp-action="CreateComment">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label">Enter content</label>
+                <textarea asp-for="Content" class="form-control" id="contentArea" maxlength="500"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
+                <p id="remainingCharsArea">Remaining characters: 500</p>
+            </div>
+            <input asp-for="TopicId" type="hidden" value="@Model.TopicId"/>
+            <input asp-for="QuotedStatement" type="hidden" value="@Model.QuotedStatement"/>
+            <div class="form-group">
+                <input type="submit" value="Reply" class="btn btn-primary" />
+            </div>
+        </form>
+        </div>
+
+
+<script type="text/javascript">
+    $(function(){
+      var maxlength = 500;
+      $("#contentArea").keyup(function(){
+       var remaining = maxlength-$(this).val().length;
+       $("#remainingCharsArea").html("Remaining characters: " + remaining);
+      });
+    });
+</script>
+
