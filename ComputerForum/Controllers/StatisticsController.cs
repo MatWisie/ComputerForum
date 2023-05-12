@@ -30,7 +30,7 @@ namespace ComputerForum.Controllers
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(1800))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(900))
                 .SetPriority(CacheItemPriority.Normal)
                 .SetSize(1024);
 

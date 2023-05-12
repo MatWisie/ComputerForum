@@ -56,13 +56,16 @@ namespace ComputerForum.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateComment(CommentCreateVM comment)
         {
-            if (ModelState.IsValid)
+            comment.CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
+            var topic = _topicService.GetTopic(comment.TopicId);
+            if (ModelState.IsValid && topic.Active)
             {
                 _commentService.AddComment(comment);
                 return RedirectToAction("Index", new { id = comment.TopicId });
             }
             return PartialView(comment);
         }
+
         [Authorize]
         public IActionResult EditTopic(int topicId)
         {
@@ -72,17 +75,31 @@ namespace ComputerForum.Controllers
             }
 
             var topic = _topicService.GetTopic(topicId);
+            if(topic == null)
+            {
+                return NotFound();
+            }
+
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
                 return Unauthorized();
             }
 
-            return View(topic);
+            TopicEditVM tmp = new TopicEditVM()
+            {
+                Id = topic.Id,
+                Title = topic.Title,
+                Description = topic.Description,
+                CreatorId = topic.CreatorId,
+                CategoryId = topic.CategoryId
+            };
+
+            return View(tmp);
         }
         [Authorize]
-        [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditTopic(Topic topic)
+        [HttpPost]
+        public IActionResult EditTopic(TopicEditVM topic)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
@@ -100,23 +117,36 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult EditComment(int commentId)
         {
+
             if (commentId == null || commentId == 0)
             {
                 return NotFound();
             }
-
             var comment = _commentService.GetComment(commentId);
+            if(comment == null || comment.Content == "Comment was deleted")
+            {
+                return NotFound();
+            }
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
                 return Unauthorized();
             }
 
-            return View(comment);
+            CommentEditVM tmp = new CommentEditVM()
+            {
+                Id = comment.Id,
+                Content = comment.Content,
+                QuotedStatement = comment.QuotedStatement,
+                CreatorId = comment.CreatorId,
+                TopicId = comment.TopicId
+            };
+
+            return View(tmp);
         }
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditComment(Comment comment)
+        public IActionResult EditComment(CommentEditVM comment)
         {
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
@@ -125,15 +155,13 @@ namespace ComputerForum.Controllers
 
             if (ModelState.IsValid)
             {
-                _commentService.EditComment(comment);
+                _commentService.EditCommentVM(comment);
                 return RedirectToAction("Index", new {id = comment.TopicId});
             }
             return View(comment);
         }
 
         [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult DeleteComment(int commentId)
         {
             var comment = _commentService.GetComment(commentId);
@@ -145,18 +173,16 @@ namespace ComputerForum.Controllers
             {
                 return Unauthorized();
             }
-
-            _commentService.DeleteComment(comment);
+            comment.Content = "Comment was deleted";
+            _commentService.EditComment(comment);
             return RedirectToAction("Index", new {id = comment.TopicId});
         }
 
         [Authorize]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult DeleteTopic(int topicId)
         {
             var topic = _topicService.GetTopic(topicId);
-            if(topic == null)
+            if (topic == null)
             {
                 return NotFound();
             }
@@ -171,8 +197,7 @@ namespace ComputerForum.Controllers
 
         [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult ReputationButton(int topicId, bool isPositive)
+        public async Task<IActionResult> ReputationButton(int topicId, bool isPositive)
         {
             var topic = _topicService.GetTopic(topicId);
             if (topic == null)
@@ -180,18 +205,19 @@ namespace ComputerForum.Controllers
                 return NotFound();
             }
 
-            string result = _reputationService.AddToClickedReputations(topic.CreatorId, topicId, isPositive);
+            string result = _reputationService.AddToClickedReputations(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value), topicId, isPositive);
+            User user = _userService.GetUserById(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             if(result == "Added")
             {
-                return Ok("Added reputation");
+                return new JsonResult(user.Reputation);
             }
             if (result == "Deleted")
             {
-                return Ok("Reputation canceled");
+                return new JsonResult(user.Reputation);
             }
             else
             {
-                return BadRequest("Something went wrong");
+                return new JsonResult("Something went wrong");
             }
         }
 
@@ -210,6 +236,23 @@ namespace ComputerForum.Controllers
                 return RedirectToAction("Index", report.TopicId);
             }
             return View(report);
+        }
+
+        [Authorize]
+        public IActionResult CloseTopic(int topicId)
+        {
+            var topic = _topicService.GetTopic(topicId);
+            if (topic == null)
+            {
+                return NotFound();
+            }
+            if (_roleValidation.CheckIfAdmin() != true || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
+            {
+                return Unauthorized();
+            }
+
+            _topicService.CloseTopic(topic);
+            return RedirectToAction("Index", new { id = topic.Id });
         }
     }
 }

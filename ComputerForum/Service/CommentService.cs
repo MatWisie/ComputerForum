@@ -27,7 +27,7 @@ namespace ComputerForum.Service
             _commentRepository.AddComment(tmp);
         }
 
-        public Comment GetComment(int commentId)
+        public Comment? GetComment(int commentId)
         {
             return _commentRepository.GetComment(commentId);
         }
@@ -39,6 +39,17 @@ namespace ComputerForum.Service
         public void DeleteComment(Comment comment)
         {
             _commentRepository.DeleteComment(comment);
+        }
+        public void EditCommentVM(CommentEditVM comment)
+        {
+            Comment tmp = new Comment()
+            {
+                Id = comment.Id,
+                Content = comment.Content,
+                CreatorId = comment.CreatorId,
+                TopicId = comment.TopicId
+            };
+            _commentRepository.EditComment(tmp);
         }
     }
 }

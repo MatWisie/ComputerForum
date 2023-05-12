@@ -13,7 +13,13 @@
         @foreach(var topic in Model)
         {
             <tr onclick="location.href = '@Url.Action("Index","Topic", new {id = @topic.Id})'"> 
-                <td>@topic.Title</td>
+                <td>
+                    @topic.Title
+                    @if (!topic.Active)
+                    {
+                        <span class="text-danger"> Closed</span>
+                    }
+                </td>
                 <td>@topic.User.Name</td>
                 <td>@topic.CreationDate.ToShortDateString()</td>
             </tr>
