@@ -9,7 +9,23 @@
     <link rel="stylesheet" href="~/ComputerForum.styles.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function() 
+        {
+            $.ajax({
+                type: "GET",
+                url: "https://official-joke-api.appspot.com/jokes/programming/random",
+                dataType: "json",
+                success: function(result) {
+                    $("#jokeArea").text(result[0].setup + " " + result[0].punchline);
+                },
+                error: function(req, status, error) {
+                }
+            })
+        })
+    </script>
+
 </head>
 <body>
     <header>
@@ -53,8 +69,17 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - ComputerForum - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm">
+                    &copy; 2023 - ComputerForum - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+                <div class="col-sm text-end">
+                    <span id="jokeArea"></span>
+                </div>
+            </div>
+            
+            
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -63,3 +88,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
