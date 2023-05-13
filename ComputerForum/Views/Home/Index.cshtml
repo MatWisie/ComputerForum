@@ -5,17 +5,17 @@
 }
 
    <h2 >Forum Categories</h2>
-   <article class="d-lg-flex">
-    <div class="container">
+   <article class="row gy-4 d-lg-flex ">
+    <div class="col flex-grow-1">
         <div class="row">
-            <div class="col-md-10">
+            <div class="">
     @if (Model.Count == 0)
     {
         <div>There are no categories</div>
     }
     else
     {
-    <div class="">
+    <div class="fff">
         <div class="d-flex justify-content-between">
             @*
             <h3>Name</h3>
@@ -41,12 +41,16 @@
             </div>
         </div>
     </div>
-    <aside class="col-md-4 ">
+    <aside class="col-md-4">
+
         @if(User.Identity.Name != null && @User.FindFirst(ClaimTypes.Role).Value == "Admin")
         {
-            <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary mb-4">Add a Category</button></a>
+            <div class="row">
+            <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary">Add a Category</button></a>
+            </div>
         }
-        <div class="col-md border" id="StatisticsZone" style="background-color:#20374c"></div>
+        <div class="col-md mt-4 border" id="StatisticsZone" style="background-color:#20374c"></div>
+
     </aside>
     </article>
 
