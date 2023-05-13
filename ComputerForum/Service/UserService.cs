@@ -102,13 +102,35 @@ namespace ComputerForum.Service
         {
             _userRepository.UpdateUser(user);
         }
+        public void UpdateUser(UserEditVM user)
+        {
+            var userById = _userRepository.GetUserById(user.Id);
+            userById.Name = user.Name;
+            userById.Email = user.Email;
+            userById.Age = user.Age;
+
+
+            _userRepository.UpdateUser(userById);
+        }
         public void ChangePassword(User user)
         {
             string tmpPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
             user.Password = tmpPassword;
             _userRepository.UpdateUser(user);
         }
+        public UserEditVM? GetUserToEditById(int userId)
+        {
 
+            User? user = _userRepository.GetUserById(userId);
+            UserEditVM tmpuser = new UserEditVM()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Age = user.Age,
+            };
+            return tmpuser;
+        }
 
     }
 }

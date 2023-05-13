@@ -54,8 +54,8 @@
                                 <button class="nav-link text-white dropdown-toggle " data-bs-toggle="dropdown">@User.Identity.Name</button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                             <li><a asp-controller="User" asp-action="UserDetails">Your Profile</a></li>
-                                            <li><a asp-controller="User" asp-action="UserDetails">Settings</a></li>
-                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="Signout">Sign out</a></li> <!-- Here gonna be ajax, for now it wont work-->
+                                            <li><a asp-controller="User" asp-action="UserSettings">Settings</a></li>
+                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="Signout">Sign out</a></li> 
                                 </ul>
                             </li>
 
@@ -75,15 +75,14 @@
     <footer class="border-top footer text-muted">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm">
+                <div class="col">
                     &copy; 2023 - ComputerForum - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                 </div>
-                <div class="col-sm text-end">
+                <div class="col text-end">
                     <span id="jokeArea"></span>
                 </div>
+                
             </div>
-            
-            
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -14,10 +14,12 @@ namespace ComputerForum.Controllers
     {
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
-        public UserController(IUserService userService, ITokenService tokenService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserController(IUserService userService, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _tokenService = tokenService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public IActionResult Login()
         {
@@ -104,24 +106,35 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult UserDetails()
         {
-            var user = _userService.GetUserById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            var user = _userService.GetUserByIdWithInclude(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             return View(user);
         }
 
         [Authorize]
-        public IActionResult UserDetailsEdit()
+        public IActionResult UserSettings()
         {
-            var user = _userService.GetUserById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            var user = _userService.GetUserToEditById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             return View(user);
         }
         [HttpPost]
         [Authorize]
-        public IActionResult UserDetailsEdit(User user)
+        public IActionResult UserSettings(UserEditVM user)
         {
+            user.Id = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (ModelState.IsValid)
             {
-                _userService.UpdateUser(user);
-                RedirectToAction("UserDetails");
+                try
+                {
+                    _userService.UpdateUser(user);
+                    _httpContextAccessor.HttpContext.User.Identity.Name.Replace(HttpContext.User.Identity.Name, user.Name);
+                    return RedirectToAction("UserDetails");
+                }
+                catch(Exception ex) 
+                {
+                    ModelState.AddModelError("", "User with this Name or Email already exists");
+                    return View(user);
+                }
+
             }
             return View(user);
         }
