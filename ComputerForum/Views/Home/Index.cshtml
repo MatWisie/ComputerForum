@@ -8,21 +8,15 @@
    <article class="row gy-4">
     <div class="col">
         <div class="row">
-            <div class="">
+            <div class="container">
     @if (Model.Count == 0)
     {
         <div>There are no categories</div>
     }
     else
     {
-    <div class="fff">
-        <div class="d-flex justify-content-between">
-            @*
-            <h3>Name</h3>
-            <th>Creator</th>
-            <th>Date</th>
-            *@
-        </div>
+
+
         @foreach(var category in Model)
         {
             <div class="bg-dark d-flex justify-content-between align-items-center p-2" >
@@ -36,7 +30,7 @@
                 }
             </div>
         }
-    </div>
+
     }
             </div>
         </div>
