@@ -35,11 +35,11 @@
                         else
                         {
                             <li class="nav-item dropdown">
-                                <button class="nav-link text-white dropdown-toggle " data-bs-toggle="dropdown">@User.Identity.Name</button>
+                                <button class="btn btn-secondary dropdown-toggle " data-bs-toggle="dropdown">@User.Identity.Name</button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a asp-controller="User" asp-action="UserDetails">Your Profile</a></li>
-                                            <li><a asp-controller="User" asp-action="UserDetails">Settings</a></li>
-                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="Signout">Sign out</a></li> <!-- Here gonna be ajax, for now it wont work-->
+                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="UserDetails">Your Profile</a></li>
+                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="UserDetails">Settings</a></li>
+                                            <li><a class="nav-link text-white border-top" asp-controller="User" asp-action="Signout">Sign out</a></li> <!-- Here gonna be ajax, for now it wont work-->
                                 </ul>
                             </li>
 
