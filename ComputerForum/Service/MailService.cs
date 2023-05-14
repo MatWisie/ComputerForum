@@ -18,7 +18,7 @@ namespace ComputerForum.Service
             mail.IsBodyHtml = true;
             mail.Priority = MailPriority.High;
             SmtpClient client = new SmtpClient();
-            client.Credentials = new System.Net.NetworkCredential("shzstrl2@mailosaur.net", "NzeT46kSryktqbATvv2xVMtoOJFNel4G");
+            client.Credentials = new System.Net.NetworkCredential("shzstrl2@mailosaur.net", "password"); //here will be needed new password, because i made test account
             client.Port = 587;
             client.Host = "smtp.mailosaur.net";
             client.EnableSsl = true;
