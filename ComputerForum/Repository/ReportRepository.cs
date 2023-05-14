@@ -1,6 +1,7 @@
 ﻿using ComputerForum.Data;
 using ComputerForum.Interfaces;
 using ComputerForum.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComputerForum.Repository
 {
@@ -14,7 +15,7 @@ namespace ComputerForum.Repository
 
         public IEnumerable<Report> GetReports()
         {
-            return _context.Reports;
+            return _context.Reports.Include(e => e.Topic).Include(e => e.ReportedUser).Include(e => e.ReportCreator);
         }
 
         public Report? GetReport(int reportId)

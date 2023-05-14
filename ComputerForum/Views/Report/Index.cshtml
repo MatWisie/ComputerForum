@@ -1,53 +1,82 @@
 ﻿@model IEnumerable<ComputerForum.Models.Report>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Reports";
 }
 
-<h1>Index</h1>
+<div class="container">
+    <table class="table table-dark table-hover">
+        <thead>
+            <th>Topic</th>
+            <th>Reported user</th>
+            <th>Report creator</th>
+            <th>Reason</th>
+        </thead>
+        @foreach(var report in Model)
+        {
+            <tr>
+                <td>@report.Topic.Title</td>
+                <td>@report.ReportedUser.Name</td>
+                <td>@report.ReportCreator.Name</td>
+                <td>@report.Description</td>
+                <td><button onclick="AcceptReport(@report.Id, this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                  <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                </svg></button></td>
+                <td><button onclick="DeleteReport(@report.Id, this)">X</button></td>
+            </tr>
+        }
+    </table>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportedUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportCreator)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Topic)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReportedUser.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReportCreator.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Topic.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+
+@section Scripts{
+    <script>
+            function DeleteReport(reportid, button) 
+            {
+                if (confirm('Are you sure?')) 
+                {
+                    $tr = $(button).closest("tr");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("DeleteReport")",
+                        dataType: "json",
+                        data: {reportId: reportid},
+                        success: function(result) {
+                            $tr.find('td').fadeOut(400, function() {
+                            $tr.remove()
+                            });
+                            console.log("report deleted")
+                        },
+                        error: function(req, status, error) {
+                            console.log(status)
+                        }
+                    })
+                }
+            }
+
+            function AcceptReport(reportid, button) 
+            {
+                if (confirm('Are you sure?')) 
+                {
+                    $tr = $(button).closest("tr");
+
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("AcceptReport")",
+                        dataType: "json",
+                        data: {reportId: reportid},
+                        success: function(result) {
+                            $tr.find('td').fadeOut(400, function() {
+                            $tr.remove()
+                            });
+                            console.log("report accepted")
+                        },
+                        error: function(req, status, error) {
+                            console.log(status)
+                        }
+                    })
+                }
+            }
+    </script>
 }
-    </tbody>
-</table>

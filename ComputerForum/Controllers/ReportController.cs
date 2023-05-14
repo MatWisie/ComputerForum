@@ -47,8 +47,7 @@ namespace ComputerForum.Controllers
 
         [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int reportId)
+        public IActionResult DeleteReport(int reportId)
         {
             if (_roleValidation.CheckIfAdmin() != true)
             {
@@ -59,15 +58,21 @@ namespace ComputerForum.Controllers
                 return NotFound();
             }
             var report = _reportService.GetReport(reportId);
-            if(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == report.ReportedUserId)
+            if (report == null)
+            {
+                return NotFound();
+            }
+            if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == report.ReportedUserId)
             {
                 return Unauthorized();
             }
+
             _reportService.DeleteReport(report);
-            return RedirectToAction("Index");
+            return new JsonResult(Ok());
         }
 
         [Authorize]
+        [HttpPost]
         public IActionResult AcceptReport(int reportId)
         {
             if (_roleValidation.CheckIfAdmin() != true)
@@ -79,12 +84,18 @@ namespace ComputerForum.Controllers
                 return NotFound();
             }
             var report = _reportService.GetReport(reportId);
+            if (report == null)
+            {
+                return NotFound();
+            }
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == report.ReportedUserId)
             {
                 return Unauthorized();
             }
+
             _reportService.AcceptReport(reportId);
-            return RedirectToAction("Index");
+            _reportService.DeleteReport(report);
+            return new JsonResult(Ok());
         }
     }
 }

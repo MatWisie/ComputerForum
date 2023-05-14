@@ -224,16 +224,28 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult ReportTopic(int topicId)
         {
-            return View(topicId);
+            Topic? topic = _topicService.GetTopic(topicId);
+            if(topic != null && topic.CreatorId != Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value))
+            {
+                ReportCreateVM tmpreport = new ReportCreateVM()
+                {
+                    ReportedUserId = topic.CreatorId,
+                    TopicId = topicId
+                };
+                return View(tmpreport);
+            }
+            return NotFound();
+            
         }
         [Authorize]
         [HttpPost]
-        public IActionResult ReportTopic(Report report)
+        public IActionResult ReportTopic(ReportCreateVM report)
         {
+            report.ReportCreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (ModelState.IsValid)
             {
                 _reportService.AddReport(report);
-                return RedirectToAction("Index", report.TopicId);
+                return RedirectToAction("Index", "Topic", new { id = report.TopicId });
             }
             return View(report);
         }
