@@ -148,12 +148,13 @@ namespace ComputerForum.Controllers
 
         public IActionResult ForgotPassword()
         {
-            return View();
+            ForgotPasswordVM tmp = new ForgotPasswordVM();
+            return View(tmp);
         }
         [HttpPost]
-        public IActionResult ForgotPassword(string email)
+        public IActionResult ForgotPassword(ForgotPasswordVM forgotPasswordVM)
         {
-            _tokenService.GenerateForgotPasswordToken(email);
+            _tokenService.GenerateForgotPasswordToken(forgotPasswordVM.email);
             return RedirectToAction("Login");
         }
 
@@ -162,7 +163,10 @@ namespace ComputerForum.Controllers
             PasswordResetToken? tmpToken = _tokenService.GetForgotPasswordToken(token);
             if (tmpToken != null)
             {
-                return View(tmpToken);
+                PasswordChangeVM tmp = new PasswordChangeVM();
+                tmp.userId = tmpToken.UserId;
+                tmp.token = tmpToken.Token;
+                return View(tmp);
             }
             return RedirectToAction("Login");
         }
@@ -175,6 +179,7 @@ namespace ComputerForum.Controllers
                 if (user != null)
                 {
                     _tokenService.DeleteUserForgotPasswordTokens(passwordVM.userId);
+                    user.Password = passwordVM.Password;
                     _userService.ChangePassword(user);
                 }
                 return RedirectToAction("Login");
