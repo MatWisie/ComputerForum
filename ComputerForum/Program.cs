@@ -1,6 +1,8 @@
+using AspNetCore.SEOHelper;
 using ComputerForum.Controllers;
 using ComputerForum.Data;
 using ComputerForum.Interfaces;
+using ComputerForum.Middleware;
 using ComputerForum.Repository;
 using ComputerForum.Service;
 using ComputerForum.Validations;
@@ -45,7 +47,7 @@ builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();
-
+app.UseCreateSitemap();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -58,14 +60,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 //app.MapRazorPages();
 app.MapDefaultControllerRoute();
-
-
 
 app.UseRouting();
 
@@ -75,4 +74,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.Lifetime.ApplicationStarted.Register(() =>
+    app.UseCreateSitemap()
+
+);
+
 app.Run();
+

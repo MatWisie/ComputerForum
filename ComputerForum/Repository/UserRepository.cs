@@ -36,7 +36,7 @@ namespace ComputerForum.Repository
         }
         public User? GetUserByIdWithInclude(int userId)
         {
-            return _context.Users.Include(e => e.Topics).FirstOrDefault(e => e.Id == userId);
+            return _context.Users.Include(e => e.Topics).Include(e => e.Comments).FirstOrDefault(e => e.Id == userId);
         }
         public bool CheckIfUserExists(UserRegisterVM userVM)
         {

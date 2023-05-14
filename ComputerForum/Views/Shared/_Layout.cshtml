@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,7 +10,25 @@
     <link rel="stylesheet" href="~/ComputerForum.styles.css" asp-append-version="true" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <meta name="description" content="@ViewBag.metaDesc" />
+    <meta name="keywords" content="@ViewBag.metaKeywords" />
+    <script>
+        $(document).ready(function() 
+        {
+            $.ajax({
+                type: "GET",
+                url: "https://official-joke-api.appspot.com/jokes/programming/random",
+                dataType: "json",
+                success: function(result) {
+                    $("#jokeArea").text(result[0].setup + " " + result[0].punchline);
+                },
+                error: function(req, status, error) {
+                }
+            })
+        })
+    </script>
+
 </head>
 <body>
     <header>
@@ -38,8 +57,12 @@
                                 <button class="nav-link text-white dropdown-toggle " data-bs-toggle="dropdown">@User.Identity.Name</button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                             <li><a asp-controller="User" asp-action="UserDetails">Your Profile</a></li>
-                                            <li><a asp-controller="User" asp-action="UserDetails">Settings</a></li>
-                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="Signout">Sign out</a></li> <!-- Here gonna be ajax, for now it wont work-->
+                                            <li><a asp-controller="User" asp-action="UserSettings">Settings</a></li>
+                                            @if(User.FindFirst(ClaimTypes.Role).Value == "Admin")
+                                            {
+                                                <li><a asp-controller="Report" asp-action="Index">Reports</a></li>
+                                            }
+                                            <li><a class="nav-link text-white" asp-controller="User" asp-action="Signout">Sign out</a></li> 
                                 </ul>
                             </li>
 
@@ -57,8 +80,16 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - ComputerForum - All Rights Reserved
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    &copy; 2023 - ComputerForum - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </div>
+                <div class="col text-end">
+                    <span id="jokeArea"></span>
+                </div>
+                
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -67,3 +98,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

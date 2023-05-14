@@ -14,10 +14,14 @@ namespace ComputerForum.Controllers
     {
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
-        public UserController(IUserService userService, ITokenService tokenService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<UserController> _logger;
+        public UserController(IUserService userService, ITokenService tokenService, IHttpContextAccessor httpContextAccessor, ILogger<UserController> logger)
         {
             _userService = userService;
             _tokenService = tokenService;
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
         public IActionResult Login()
         {
@@ -34,6 +38,7 @@ namespace ComputerForum.Controllers
                     if(user.Active == false)
                     {
                         ModelState.AddModelError("", "User is not active");
+                        _logger.LogError("User " + userVM.Name + " tried to login, but his account was not active");
                         return View(userVM);
                     }
                     else
@@ -70,10 +75,11 @@ namespace ComputerForum.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
-
+                        _logger.LogInformation("Login " + userVM.Name + " successfull");
                         return RedirectToAction("Index", "Home");
                     }
                 }
+                _logger.LogError("Login " + userVM.Name + " failed, wrong name or password");
                 ModelState.AddModelError("", "Wrong name or password");
                 return View(userVM);
             }
@@ -88,6 +94,7 @@ namespace ComputerForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                _logger.LogError("User " + userVM.Name + " registered");
                 _userService.AddUser(userVM);
                 return RedirectToAction("Login");
             }
@@ -104,24 +111,35 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult UserDetails()
         {
-            var user = _userService.GetUserById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            var user = _userService.GetUserByIdWithInclude(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             return View(user);
         }
 
         [Authorize]
-        public IActionResult UserDetailsEdit()
+        public IActionResult UserSettings()
         {
-            var user = _userService.GetUserById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
+            var user = _userService.GetUserToEditById(Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             return View(user);
         }
         [HttpPost]
         [Authorize]
-        public IActionResult UserDetailsEdit(User user)
+        public IActionResult UserSettings(UserEditVM user)
         {
+            user.Id = Int32.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (ModelState.IsValid)
             {
-                _userService.UpdateUser(user);
-                RedirectToAction("UserDetails");
+                try
+                {
+                    _userService.UpdateUser(user);
+                    _httpContextAccessor.HttpContext.User.Identity.Name.Replace(HttpContext.User.Identity.Name, user.Name);
+                    return RedirectToAction("UserDetails");
+                }
+                catch(Exception ex) 
+                {
+                    ModelState.AddModelError("", "User with this Name or Email already exists");
+                    return View(user);
+                }
+
             }
             return View(user);
         }
@@ -135,12 +153,13 @@ namespace ComputerForum.Controllers
 
         public IActionResult ForgotPassword()
         {
-            return View();
+            ForgotPasswordVM tmp = new ForgotPasswordVM();
+            return View(tmp);
         }
         [HttpPost]
-        public IActionResult ForgotPassword(string email)
+        public IActionResult ForgotPassword(ForgotPasswordVM forgotPasswordVM)
         {
-            _tokenService.GenerateForgotPasswordToken(email);
+            _tokenService.GenerateForgotPasswordToken(forgotPasswordVM.email);
             return RedirectToAction("Login");
         }
 
@@ -149,7 +168,10 @@ namespace ComputerForum.Controllers
             PasswordResetToken? tmpToken = _tokenService.GetForgotPasswordToken(token);
             if (tmpToken != null)
             {
-                return View(tmpToken);
+                PasswordChangeVM tmp = new PasswordChangeVM();
+                tmp.userId = tmpToken.UserId;
+                tmp.token = tmpToken.Token;
+                return View(tmp);
             }
             return RedirectToAction("Login");
         }
@@ -162,6 +184,8 @@ namespace ComputerForum.Controllers
                 if (user != null)
                 {
                     _tokenService.DeleteUserForgotPasswordTokens(passwordVM.userId);
+                    user.Password = passwordVM.Password;
+                    _logger.LogInformation("User " + passwordVM.userId + " changed password");
                     _userService.ChangePassword(user);
                 }
                 return RedirectToAction("Login");

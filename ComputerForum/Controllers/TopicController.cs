@@ -17,7 +17,8 @@ namespace ComputerForum.Controllers
         private readonly IReportService _reportService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRoleValidation _roleValidation;
-        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService, IRoleValidation roleValidation)
+        private readonly ILogger<TopicController> _logger;
+        public TopicController(ITopicService topicService, ICommentService commentService, IHttpContextAccessor httpContextAccessor, IUserService userService, IReputationService reputationService, IReportService reportService, IRoleValidation roleValidation, ILogger<TopicController> logger)
         {
             _topicService = topicService;
             _commentService = commentService;
@@ -26,16 +27,25 @@ namespace ComputerForum.Controllers
             _reputationService = reputationService;
             _reportService = reportService;
             _roleValidation = roleValidation;
+            _logger = logger;
         }
 
         public IActionResult Index(int id)
         {
             if(id == null || id == 0)
             {
+                _logger.LogError("Topic not found");
                 return NotFound();
             }
             var topic = _topicService.GetTopicWithComments(id);
-            return View(topic);
+            if(topic != null)
+            {
+                ViewBag.metaDesc = topic.Description;
+                ViewBag.metaKeywords = topic.Title+" "+topic.Description;
+                return View(topic);
+            }
+            _logger.LogError("Topic not found");
+            return NotFound();
         }
 
         [Authorize]
@@ -61,6 +71,7 @@ namespace ComputerForum.Controllers
             if (ModelState.IsValid && topic.Active)
             {
                 _commentService.AddComment(comment);
+                _logger.LogInformation("Created comment in topic" + comment.TopicId);
                 return RedirectToAction("Index", new { id = comment.TopicId });
             }
             return PartialView(comment);
@@ -71,17 +82,20 @@ namespace ComputerForum.Controllers
         {
             if (topicId == null || topicId == 0)
             {
+                _logger.LogError("Topic not found");
                 return NotFound();
             }
 
             var topic = _topicService.GetTopic(topicId);
             if(topic == null)
             {
+                _logger.LogError("Topic "+topicId+" not found");
                 return NotFound();
             }
 
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
+                _logger.LogError("Unauthorized access to topic");
                 return Unauthorized();
             }
 
@@ -101,13 +115,16 @@ namespace ComputerForum.Controllers
         [HttpPost]
         public IActionResult EditTopic(TopicEditVM topic)
         {
+            topic.CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
+                _logger.LogError("Unauthorized access to topic");
                 return Unauthorized();
             }
 
             if (ModelState.IsValid)
             {
+                _logger.LogInformation("Edited topic " + topic.Id);
                 _topicService.EditTopic(topic);
                 return RedirectToAction("Index", new {id = topic.Id});
             }
@@ -120,15 +137,18 @@ namespace ComputerForum.Controllers
 
             if (commentId == null || commentId == 0)
             {
+                _logger.LogError("Comment "+commentId+" not found");
                 return NotFound();
             }
             var comment = _commentService.GetComment(commentId);
             if(comment == null || comment.Content == "Comment was deleted")
             {
+                _logger.LogError("Comment " + commentId + " not found");
                 return NotFound();
             }
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
+                _logger.LogError("Unauthorized access to " + commentId + " comment");
                 return Unauthorized();
             }
 
@@ -148,13 +168,16 @@ namespace ComputerForum.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditComment(CommentEditVM comment)
         {
+            comment.CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != comment.CreatorId)
             {
+                _logger.LogError("Unauthorized access to " + comment.Id + " comment");
                 return Unauthorized();
             }
 
             if (ModelState.IsValid)
             {
+                _logger.LogInformation("Edited comment " + comment.Id);
                 _commentService.EditCommentVM(comment);
                 return RedirectToAction("Index", new {id = comment.TopicId});
             }
@@ -202,6 +225,7 @@ namespace ComputerForum.Controllers
             var topic = _topicService.GetTopic(topicId);
             if (topic == null)
             {
+                _logger.LogError("Topic " + topicId + " not found");
                 return NotFound();
             }
 
@@ -209,10 +233,12 @@ namespace ComputerForum.Controllers
             User user = _userService.GetUserById(Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value));
             if(result == "Added")
             {
+                _logger.LogInformation("Added reputation to topic "+topicId);
                 return new JsonResult(user.Reputation);
             }
             if (result == "Deleted")
             {
+                _logger.LogInformation("Removed reputation from topic " + topicId);
                 return new JsonResult(user.Reputation);
             }
             else
@@ -224,16 +250,29 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult ReportTopic(int topicId)
         {
-            return View(topicId);
+            Topic? topic = _topicService.GetTopic(topicId);
+            if(topic != null && topic.CreatorId != Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value))
+            {
+                ReportCreateVM tmpreport = new ReportCreateVM()
+                {
+                    ReportedUserId = topic.CreatorId,
+                    TopicId = topicId
+                };
+                return View(tmpreport);
+            }
+            _logger.LogError("Topic not found " + topicId);
+            return NotFound();
+            
         }
         [Authorize]
         [HttpPost]
-        public IActionResult ReportTopic(Report report)
+        public IActionResult ReportTopic(ReportCreateVM report)
         {
+            report.ReportCreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (ModelState.IsValid)
             {
                 _reportService.AddReport(report);
-                return RedirectToAction("Index", report.TopicId);
+                return RedirectToAction("Index", "Topic", new { id = report.TopicId });
             }
             return View(report);
         }
@@ -244,13 +283,15 @@ namespace ComputerForum.Controllers
             var topic = _topicService.GetTopic(topicId);
             if (topic == null)
             {
+                _logger.LogError("Topic " + topicId + " not found");
                 return NotFound();
             }
             if (_roleValidation.CheckIfAdmin() != true || Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != topic.CreatorId)
             {
+                _logger.LogError("Unauthorized access to topic " + topicId);
                 return Unauthorized();
             }
-
+            _logger.LogInformation("Topic " + topicId + " closed");
             _topicService.CloseTopic(topic);
             return RedirectToAction("Index", new { id = topic.Id });
         }

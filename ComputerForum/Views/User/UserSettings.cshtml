@@ -1,0 +1,30 @@
+﻿@model ComputerForum.ViewModels.UserEditVM;
+@{
+    ViewData["Title"] = "User Settings";
+}
+
+<form asp-action="UserSettings" class="row gy-2 gx-3 align-items-center">
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <label for="emailInput" class="form-label mt-2">Edit Email</label>
+            <input asp-for="Email" type="email" id="emailInput" class="form-control" placeholder="@Model.Email"/>
+            @Html.ValidationMessageFor(model=>model.Email, null, new {@class = "text-danger"})
+        </div>
+        <div class="col-md-6 col-12">
+            <label for="usernameInput" class="form-label mt-2" >Edit Username</label>
+            <input asp-for="Name" type="text" id="usernameInput" class="form-control" placeholder="@Model.Name"/>
+            @Html.ValidationMessageFor(model=>model.Name, null, new {@class = "text-danger"})
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <label asp-for="Age" class="form-label mt-2" >Edit Age</label>
+            <input asp-for="Age" id="ageInput" type="number" class="form-control" min=13 max=200 value="@Model.Age"/>
+            @Html.ValidationMessageFor(model=>model.Age, null, new {@class = "text-danger"})
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.ValidationSummary()
+        <button type="submit" class="btn btn-primary mt-2">Edit</button>
+    </div>
+</form>

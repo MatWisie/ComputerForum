@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @model IList<Category>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Categories";
 }
 
    <h2 >Forum Categories</h2>
@@ -20,6 +20,8 @@
             <th>Name</th>
             <th>Creator</th>
             <th>Date</th>
+            <th></th>
+            <th></th>
         </thead>
         @foreach(var category in Model)
         {
@@ -37,15 +39,16 @@
     </table>
     }
     </div>
-    </div>
-    </div>
-    <aside class="col-md-4 ">
+
+    <aside class="col-md ">
         @if(User.Identity.Name != null && @User.FindFirst(ClaimTypes.Role).Value == "Admin")
         {
             <a asp-controller="Home" asp-action="AddCategory"><button class="btn btn-primary mb-4">Add a Category</button></a>
         }
         <div class="col-md border" id="StatisticsZone" style="background-color:#20374c"></div>
     </aside>
+    </div>
+    </div>
     </article>
 
     @section Scripts{

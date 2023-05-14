@@ -12,7 +12,9 @@ namespace ComputerForum.Interfaces
         User? GetUserById(int userId);
         User? GetUserByIdWithInclude(int userId);
         void AddReputation(int userId, int number);
+        UserEditVM? GetUserToEditById(int userId);
         void UpdateUser(User user);
+        void UpdateUser(UserEditVM user);
         void ChangePassword(User user);
         User? GetUserByName(string userName);
         User? GetUserByEmail(string userEmail);

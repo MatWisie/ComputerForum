@@ -1,5 +1,6 @@
 ﻿using ComputerForum.Interfaces;
 using ComputerForum.Models;
+using ComputerForum.ViewModels;
 
 namespace ComputerForum.Service
 {
@@ -23,9 +24,16 @@ namespace ComputerForum.Service
             return _reportRepository.GetReport(reportId);
         }
 
-        public void AddReport(Report report)
+        public void AddReport(ReportCreateVM report)
         {
-            _reportRepository.AddReport(report);
+            Report tmpreport = new Report()
+            {
+                Description = report.Description,
+                ReportedUserId = report.ReportedUserId,
+                ReportCreatorId = report.ReportCreatorId,
+                TopicId = report.TopicId
+            };
+            _reportRepository.AddReport(tmpreport);
         }
         public void DeleteReport(Report report)
         {
