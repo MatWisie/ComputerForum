@@ -28,6 +28,8 @@ namespace ComputerForum.Controllers
         public IActionResult Index()
         {
             var categories = _categoryService.GetCategories();
+            ViewBag.metaDesc = "categories";
+            ViewBag.metaKeywords = "categories";
             _logger.LogInformation("Rendered Index");
             return View(categories);
         }
@@ -36,6 +38,7 @@ namespace ComputerForum.Controllers
         {
             if (_roleValidation.CheckIfAdmin() != true)
             {
+                _logger.LogError("Add categroy error, not authorized");
                 return Unauthorized();
             }
             return View();
@@ -44,8 +47,10 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult AddCategory(CategoryVM category)
         {
+            category.CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (_roleValidation.CheckIfAdmin() != true)
             {
+                _logger.LogError("Add categroy error, not authorized");
                 return Unauthorized();
             }
             if (ModelState.IsValid)
@@ -54,6 +59,7 @@ namespace ComputerForum.Controllers
                 _logger.LogInformation("Category added");
                 return RedirectToAction("Index");
             }
+            _logger.LogError("AddCategory not valid model");
             return View(category);
         }
 
@@ -64,10 +70,12 @@ namespace ComputerForum.Controllers
             var category = _categoryService.GetCategoryById(id);
             if (category == null)
             {
+                _logger.LogError("DeleteCategory error, category notfound");
                 return NotFound();
             }
             if (_roleValidation.CheckIfAdmin() != true)
             {
+                _logger.LogError("DeleteCategory error, unauthorized");
                 return Unauthorized();
             }
             _logger.LogInformation("Category delted");
@@ -81,10 +89,12 @@ namespace ComputerForum.Controllers
             var category = _categoryService.GetCategoryById(categoryId);
             if (category == null)
             {
+                _logger.LogError("EditCategory error, not found");
                 return NotFound();
             }
             if (_roleValidation.CheckIfAdmin() != true && Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) != category.CreatorId)
             {
+                _logger.LogError("EditCategory error, unauthorized");
                 return Unauthorized();
             }
 
@@ -127,6 +137,8 @@ namespace ComputerForum.Controllers
         public IActionResult Topic(int id)
         {
             var topics = _topicService.GetTopics(id);
+            ViewBag.metaDesc = "Topics";
+            ViewBag.metaKeywords = "Topics";
             _logger.LogInformation("Entered Topic");
             return View(topics);
         }
@@ -142,12 +154,14 @@ namespace ComputerForum.Controllers
         [Authorize]
         public IActionResult AddTopic(TopicVM topic)
         {
+            topic.CreatorId = Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value);
             if (ModelState.IsValid)
             {
                 _topicService.AddTopic(topic);
                 _logger.LogInformation("Created new Topic");
                 return RedirectToAction("Topic", new {id = topic.CategoryId });
             }
+            _logger.LogError("AddTopic error, model not valid");
             return View(topic);
             
         }

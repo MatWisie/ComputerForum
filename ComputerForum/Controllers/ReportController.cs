@@ -11,11 +11,13 @@ namespace ComputerForum.Controllers
         private IReportService _reportService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IRoleValidation _roleValidation;
-        public ReportController(IReportService reportService, IRoleValidation roleValidation, IHttpContextAccessor httpContextAccessor)
+        private readonly ILogger<ReportController> _logger;
+        public ReportController(IReportService reportService, IRoleValidation roleValidation, IHttpContextAccessor httpContextAccessor, ILogger<ReportController> logger)
         {
             _reportService = reportService;
             _roleValidation = roleValidation;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         [Authorize]
@@ -68,6 +70,7 @@ namespace ComputerForum.Controllers
             }
 
             _reportService.DeleteReport(report);
+            _logger.LogInformation("Report " + report.Id + " deleted");
             return new JsonResult(Ok());
         }
 
@@ -77,24 +80,29 @@ namespace ComputerForum.Controllers
         {
             if (_roleValidation.CheckIfAdmin() != true)
             {
+                _logger.LogError("Report accept error, not authorized");
                 return Unauthorized();
             }
             if (reportId == 0 || reportId == null)
             {
+                _logger.LogError("Report accept error, not found");
                 return NotFound();
             }
             var report = _reportService.GetReport(reportId);
             if (report == null)
             {
+                _logger.LogError("Report accept error, not found");
                 return NotFound();
             }
             if (Int32.Parse(_httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == report.ReportedUserId)
             {
+                _logger.LogError("Report accept " + report.Id + " error, unauthorized");
                 return Unauthorized();
             }
 
             _reportService.AcceptReport(reportId);
             _reportService.DeleteReport(report);
+            _logger.LogInformation("Report " + report.Id + " accepted");
             return new JsonResult(Ok());
         }
     }
