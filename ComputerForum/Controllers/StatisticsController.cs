@@ -9,10 +9,12 @@ namespace ComputerForum.Controllers
     {
         private readonly IStatisticsService _statisticsService;
         private readonly IMemoryCache _cache;
-        public StatisticsController(IStatisticsService statisticsService, IMemoryCache cache)
+        private readonly ILogger<StatisticsController> _logger;
+        public StatisticsController(IStatisticsService statisticsService, IMemoryCache cache, ILogger<StatisticsController> logger)
         {
             _statisticsService = statisticsService;
             _cache = cache;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -22,6 +24,7 @@ namespace ComputerForum.Controllers
             if (_cache.TryGetValue("BlogStatisticsCacheKey", out BlogStatisticsVM blogStatistics))
             {
                 var cachedStats = _cache.Get("BlogStatisticsCacheKey");
+                _logger.LogInformation("Statistics returned from cache");
                 return PartialView(blogStatistics);
             }
             else
@@ -35,7 +38,7 @@ namespace ComputerForum.Controllers
                 .SetSize(1024);
 
                 _cache.Set("BlogStatisticsCacheKey", newBlogStatistics, cacheEntryOptions);
-
+                _logger.LogInformation("Statistics created in cache");
 
                 return PartialView(newBlogStatistics);
             }

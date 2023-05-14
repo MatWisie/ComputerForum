@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @model IList<Category>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Categories";
 }
 
    <h2 >Forum Categories</h2>
@@ -15,6 +15,7 @@
     }
     else
     {
+
 
 
         @foreach(var category in Model)
@@ -35,8 +36,10 @@
             </div>
         </div>
     </div>
+
     <aside class="col-md-4">
         <div class="row row-cols-1 gy-4">
+
 
         @if(User.Identity.Name != null && @User.FindFirst(ClaimTypes.Role).Value == "Admin")
         {
@@ -49,6 +52,8 @@
         </div>
     </div>
     </aside>
+    </div>
+    </div>
     </article>
 
     @section Scripts{

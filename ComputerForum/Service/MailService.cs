@@ -6,35 +6,30 @@ namespace ComputerForum.Service
 {
     public class MailService : IMailService
     {
-        public void SendMail(string receiverEmail, string topic, string message)
+        public void SendMail(string receiverEmail, string topic, string messagestring)
         {
+            System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage();
+            mail.To.Add(receiverEmail);
+            mail.From = new MailAddress("shzstrl2@mailosaur.net", "ROBOT", System.Text.Encoding.UTF8);
+            mail.Subject = topic;
+            mail.SubjectEncoding = System.Text.Encoding.UTF8;
+            mail.Body = messagestring;
+            mail.BodyEncoding = System.Text.Encoding.UTF8;
+            mail.IsBodyHtml = true;
+            mail.Priority = MailPriority.High;
+            SmtpClient client = new SmtpClient();
+            client.Credentials = new System.Net.NetworkCredential("shzstrl2@mailosaur.net", "password"); //here will be needed new password, because i made test account
+            client.Port = 587;
+            client.Host = "smtp.mailosaur.net";
+            client.EnableSsl = true;
             try
             {
-                var sender = new MailAddress("ourEmail@gmail.com", "Computer forum");
-                var receiver = new MailAddress(receiverEmail);
-                var password = System.Configuration.ConfigurationManager.AppSettings["EmailPass"];
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(sender.Address, password)
-                };
-                using (var mess = new MailMessage(sender, receiver)
-                {
-                    Subject = topic,
-                    Body = message
-                })
-                {
-                    smtp.Send(mess);
-                }
+                client.Send(mail);
             }
             catch (Exception ex)
             {
-
             }
         }
     }
 }
+

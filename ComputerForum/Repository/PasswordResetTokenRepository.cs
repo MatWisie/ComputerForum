@@ -14,15 +14,18 @@ namespace ComputerForum.Repository
         public void AddToken(PasswordResetToken token)
         {
             _context.PasswordResetTokens.Add(token);
+            _context.SaveChanges();
         }
         public void DeleteToken(PasswordResetToken token)
         {
             _context.PasswordResetTokens.Remove(token);
+            _context.SaveChanges();
         }
         public void DeleteUserTokens(int userId)
         {
             var tokens = _context.PasswordResetTokens.Where(e => e.UserId == userId);
             _context.RemoveRange(tokens);
+            _context.SaveChanges();
         }
         public PasswordResetToken? GetToken(string token)
         {
