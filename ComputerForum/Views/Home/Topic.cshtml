@@ -10,8 +10,8 @@
             <div class="container">
         @foreach(var topic in Model)
         {
-            <div class="bg-dark row p-2 border-top border-secondary " onclick="location.href = '@Url.Action("Index","Topic", new {id = @topic.Id})'"> 
-                <div class="text-truncate ellipsis col" title="@topic.Title">
+                <div class="bg-dark d-flex p-2 border-top border-secondary justify-content-between" onclick="location.href = '@Url.Action("Index","Topic", new {id = @topic.Id})'"> 
+                <div class="text-truncate col" title="@topic.Title">
                     @topic.Title
                     @if (!topic.Active)
                     {
@@ -19,8 +19,8 @@
                     }
                 </div>
                 <div class="text-truncate col" title="@topic.Description">@topic.Description</div>
-                <div class="col text-truncate ellipsis">@topic.User.Name</div>
-                <div class="col">@topic.CreationDate.ToShortDateString()</div>
+                <div class="col text-truncate text-center ellipsis">@topic.User.Name</div>
+                <div class="col text-center">@topic.CreationDate.ToShortDateString()</div>
             </div>
         }
             </div>
